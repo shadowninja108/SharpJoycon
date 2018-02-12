@@ -12,7 +12,7 @@ namespace Joycon_Glue
 
         protected SimplifiedHidDevice hid;
 
-        private bool firstPoll = false;
+        private bool firstPoll = true;
 
         public InputJoystick(SimplifiedHidDevice hid)
         {
@@ -24,8 +24,8 @@ namespace Joycon_Glue
             if (firstPoll)
             {
                 hid.GetHidDevice().MonitorDeviceEvents = true;
-                hid.GetHidDevice().Read(Poll);
-                firstPoll = true;
+                hid.GetHidDevice().Read(Poll); // setup callback
+                firstPoll = false;
             }
         }
 

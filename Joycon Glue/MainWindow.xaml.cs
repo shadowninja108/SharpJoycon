@@ -25,7 +25,7 @@ namespace Joycon_Glue
         private uint vjd = 0;
 
         public MainWindow()
-        { 
+        {
             joystick = new vJoy();
             if (joystick.vJoyEnabled())
             {
@@ -40,7 +40,7 @@ namespace Joycon_Glue
                     Console.WriteLine($"Trying joystick {i}...");
                     var status = joystick.GetVJDStatus(i);
                     Console.WriteLine($"Joystick status: {status}");
-                    if (new VjdStat[] { VjdStat.VJD_STAT_OWN, VjdStat.VJD_STAT_FREE}.Contains(status))// is it owned already or ready to own?
+                    if (new VjdStat[] { VjdStat.VJD_STAT_OWN, VjdStat.VJD_STAT_FREE }.Contains(status))// is it owned already or ready to own?
                     {
                         vjd = i;
                         break;
@@ -49,7 +49,7 @@ namespace Joycon_Glue
                 if (vjd != 0) // joystick id can never be 0, not using -1 to avoid casting
                 {
                     Console.WriteLine("Attempting to acquire joystick...");
-                    if(joystick.AcquireVJD(vjd))
+                    if (joystick.AcquireVJD(vjd))
                     {
                         Console.WriteLine("Success!");
                         Thread thread = new Thread(run)
@@ -57,11 +57,13 @@ namespace Joycon_Glue
                             IsBackground = true
                         };
                         thread.Start();
-                    } else
+                    }
+                    else
                     {
                         Console.WriteLine("Failed to acquire joystick!");
                     }
-                } else
+                }
+                else
                 {
                     Console.WriteLine("No joysticks available!");
                 }
@@ -87,7 +89,7 @@ namespace Joycon_Glue
                 Console.WriteLine("Detected Nintendo device.");
                 SimplifiedHidDevice simple = new SimplifiedHidDevice(device);
                 NintendoController controller = new UnknownNintendoController(simple);
-                controller.SetReportMode(0x3F);
+                controller.SetReportMode(0x3F); // normal HID mode
                 switch (device.Attributes.ProductId)
                 {
                     case 8198:
@@ -97,11 +99,10 @@ namespace Joycon_Glue
                         rightJoycon = new RightJoycon(simple);
                         break;
                 }
-                Console.WriteLine($"SPI read: {controller.getBodyColor()}");
                 controller.SetPlayerLights(NintendoController.PlayerLightState.Player1);
                 controller.SetVibration(true);
                 controller.SetIMU(true);
-                controller.SetReportMode(0x30);
+                controller.SetReportMode(0x30); // 60hz update mode
             }
             Console.WriteLine("Found all devices.");
             GluedJoycons glued = new GluedJoycons(leftJoycon, rightJoycon);
@@ -142,9 +143,9 @@ namespace Joycon_Glue
                 joystick.SetAxis(leftPos.x, vjd, HID_USAGES.HID_USAGE_X);
                 joystick.SetAxis(leftPos.y, vjd, HID_USAGES.HID_USAGE_Y);
                 joystick.SetAxis(rightPos.x, vjd, HID_USAGES.HID_USAGE_RX);
-                joystick.SetAxis(rightPos.x, vjd, HID_USAGES.HID_USAGE_RY);
+                joystick.SetAxis(rightPos.y, vjd, HID_USAGES.HID_USAGE_RY);
                 Thread.Sleep(20);
             }
         }
-        
+    }    
 }

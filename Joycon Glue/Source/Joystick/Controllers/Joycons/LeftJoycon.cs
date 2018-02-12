@@ -114,13 +114,10 @@ namespace Joycon_Glue.Source.Joystick
                     offset = 0x8012;
                     break;
                 default:
-                    offset = 0x603D;
-                    break;
+                    goto case ConfigurationType.Factory;
             }
 
             byte[] data = ReadSPI(offset, 0x12);
-
-            Console.WriteLine($"Raw analog config: {BitConverter.ToString(data)}");
 
             int[] parsed = ParseAnalogConfiguration(data);
 
@@ -128,10 +125,10 @@ namespace Joycon_Glue.Source.Joystick
 
             config.xCenter = parsed[2];
             config.yCenter = parsed[3];
-            config.xMax = parsed[0] + config.xCenter;
-            config.yMax = parsed[1] + config.yCenter;
             config.xMin = config.xCenter - parsed[4];
             config.yMin = config.yCenter - parsed[5];
+            config.xMax = parsed[0] + config.xCenter;
+            config.yMax = parsed[1] + config.yCenter;
 
             return config;
         }

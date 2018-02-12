@@ -16,7 +16,7 @@ namespace Joycon_Glue.Source.Joystick
 
         public RightJoycon(SimplifiedHidDevice device) : base(device)
         {
-
+            stickConfig = GetAnalogConfiguration(ConfigurationType.Factory);
         }
 
         public override Buttons GetButtons()
@@ -72,6 +72,13 @@ namespace Joycon_Glue.Source.Joystick
                 int offset = 9;
                 int posX = bytes[offset] | ((bytes[offset + 1] & 0xF) << 8);
                 int posY = (bytes[offset] >> 4) | (bytes[offset + 2] << 4);
+
+                float posXf = (posX - stickConfig.xMin) / (float)stickConfig.xMax;
+                float posYf = (posY - stickConfig.yMin) / (float)stickConfig.yMax;
+                posYf = 1 - posYf;
+                posX = (int)(posXf * 32767f);
+                posY = (int)(posYf * 32767f);
+
                 pos = new StickPos(posX, posY);
             }
         }
@@ -88,18 +95,33 @@ namespace Joycon_Glue.Source.Joystick
 
         public override AnalogConfiguration GetAnalogConfiguration(ConfigurationType type)
         {
-            byte[] data = ReadSPI(0x6046, 0x604E - 0x6046);
+
+            uint offset;
+
+            switch (type)
+            {
+                case ConfigurationType.Factory:
+                    offset = 0x6046;
+                    break;
+                case ConfigurationType.User:
+                    offset = 0x801D;
+                    break;
+                default:
+                    goto case ConfigurationType.Factory;
+            }
+
+            byte[] data = ReadSPI(offset, 0x12);
 
             int[] parsed = ParseAnalogConfiguration(data);
 
             AnalogConfiguration config = new AnalogConfiguration();
 
-            config.xMax = parsed[0];
-            config.yMax = parsed[1];
-            config.xCenter = parsed[2];
-            config.yCenter = parsed[3];
-            config.xMin = parsed[4];
-            config.yMin = parsed[5];
+            config.xCenter = parsed[0];
+            config.yCenter = parsed[1];
+            config.xMax = parsed[4] + config.xCenter;
+            config.yMax = parsed[5] + config.yCenter;
+            config.xMin = config.xCenter - parsed[2];
+            config.yMin = config.yCenter - parsed[3];
 
             return config;
         }

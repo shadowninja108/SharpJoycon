@@ -114,7 +114,6 @@ public abstract class NintendoController : InputJoystick
 
     public void SendSubcommand(byte command, byte subCommand, byte[] data)
     {
-        Console.WriteLine("Sending subcommand...");
         byte[] output = new byte[0x40];
         output[0] = packetNumber;
         // rumble data (unimplemented)
