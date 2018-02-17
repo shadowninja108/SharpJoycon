@@ -12,6 +12,9 @@ using Joycon_Glue.Source.Joystick;
 using Joycon_Glue.Source.Joystick.Controllers;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
+using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
+using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HardwareInterface;
+using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
 
 namespace Joycon_Glue
 {
@@ -81,28 +84,33 @@ namespace Joycon_Glue
             // https://github.com/mfosse/JoyCon-Driver
 
             IList<HidDevice> devices = HidDevices.Enumerate(0x057e).ToList();
-            LeftJoycon leftJoycon = null;
-            RightJoycon rightJoycon = null;
+            NintendoController leftJoycon = null;
+            NintendoController rightJoycon = null;
             foreach (HidDevice device in devices)
             {
                 device.OpenDevice();
                 Console.WriteLine("Detected Nintendo device.");
-                SimplifiedHidDevice simple = new SimplifiedHidDevice(device);
-                NintendoController controller = new UnknownNintendoController(simple);
-                controller.SetReportMode(0x3F); // normal HID mode
-                switch (device.Attributes.ProductId)
+                NintendoController controller = new NintendoController(device);
+                HardwareInterface hardware = controller.GetHardware();
+                hardware.SetVibration(true);
+                hardware.SetIMU(true);
+                hardware.SetPlayerLights(PlayerLightState.Player1);
+
+                switch (hardware.GetControllerType())
                 {
-                    case 8198:
-                        leftJoycon = new LeftJoycon(simple);
+                    case ControllerType.LeftJoycon:
+                        Console.WriteLine("Left Joycon detected.");
+                        leftJoycon = controller;
                         break;
-                    case 8199:
-                        rightJoycon = new RightJoycon(simple);
+                    case ControllerType.RightJoycon:
+                        Console.WriteLine("Right Joycon detected.");
+                        rightJoycon = controller;
+                        break;
+                    default:
+                        Console.WriteLine("Unrecognized device.");
                         break;
                 }
-                controller.SetPlayerLights(NintendoController.PlayerLightState.Player1);
-                controller.SetVibration(true);
-                controller.SetIMU(true);
-                controller.SetReportMode(0x30); // 60hz update mode
+                hardware.SetReportMode(0x30); // 60hz update mode
             }
             Console.WriteLine("Found all devices.");
             GluedJoycons glued = new GluedJoycons(leftJoycon, rightJoycon);
@@ -119,22 +127,7 @@ namespace Joycon_Glue
                 }
 
                 //pov
-                int povValue = -1;
-                switch (glued.GetPov())
-                {
-                    case InputJoystick.POVDirection.Up:
-                        povValue = 0;
-                        break;
-                    case InputJoystick.POVDirection.Right:
-                        povValue = 1;
-                        break;
-                    case InputJoystick.POVDirection.Down:
-                        povValue = 2;
-                        break;
-                    case InputJoystick.POVDirection.Left:
-                        povValue = 3;
-                        break;
-                }
+                int povValue = (int)glued.GetPov() -1;
                 joystick.SetDiscPov(povValue, vjd, 1);
 
                 //sticks
@@ -144,7 +137,7 @@ namespace Joycon_Glue
                 joystick.SetAxis(leftPos.y, vjd, HID_USAGES.HID_USAGE_Y);
                 joystick.SetAxis(rightPos.x, vjd, HID_USAGES.HID_USAGE_RX);
                 joystick.SetAxis(rightPos.y, vjd, HID_USAGES.HID_USAGE_RY);
-                Thread.Sleep(20);
+                Thread.Sleep(16);
             }
         }
     }    

@@ -5,18 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HidLibrary;
+using Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller;
+using static Joycon_Glue.InputJoystick;
+using static Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller.Controller;
+using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.ConfigurationInterface;
+using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
+using static NintendoController;
 
 namespace Joycon_Glue.Source.Joystick
 {
-    class RightJoycon : NintendoController 
+    class RightJoycon : Controller 
     {
         private Buttons buttons;
         private StickPos pos;
-        private AnalogConfiguration stickConfig;
+        private AnalogConfiguration analogConfirguration;
 
-        public RightJoycon(SimplifiedHidDevice device) : base(device)
+        public RightJoycon(NintendoController controller) : base(controller)
         {
-            stickConfig = GetAnalogConfiguration(ConfigurationType.Factory);
         }
 
         public override Buttons GetButtons()
@@ -24,7 +29,7 @@ namespace Joycon_Glue.Source.Joystick
             return buttons;
         }
 
-        public override POVDirection GetPov()
+        public override POVDirection GetPov(int id)
         {
             return POVDirection.None;
         }
@@ -41,11 +46,11 @@ namespace Joycon_Glue.Source.Joystick
             }
         }
 
-        public override void Poll(HidDeviceData data) 
+        public override void Poll(PacketData data) 
         {
             //reset to default values
             buttons = new Buttons();
-            byte[] bytes = data.Data;
+            byte[] bytes = data.header.Concat(data.data).ToArray();
             if (bytes.Length > 0)
             {
                 BitArray rightData = new BitArray(new byte[] { bytes[3] });
@@ -73,8 +78,10 @@ namespace Joycon_Glue.Source.Joystick
                 int posX = bytes[offset] | ((bytes[offset + 1] & 0xF) << 8);
                 int posY = (bytes[offset] >> 4) | (bytes[offset + 2] << 4);
 
-                float posXf = (posX - stickConfig.xMin) / (float)stickConfig.xMax;
-                float posYf = (posY - stickConfig.yMin) / (float)stickConfig.yMax;
+                AnalogConfiguration config = GetAnalogConfiguration();
+
+                float posXf = (posX - config.xMin) / (float)config.xMax;
+                float posYf = (posY - config.yMin) / (float)config.yMax;
                 posYf = 1 - posYf;
                 posX = (int)(posXf * 32767f);
                 posY = (int)(posYf * 32767f);
@@ -83,47 +90,41 @@ namespace Joycon_Glue.Source.Joystick
             }
         }
 
-        public override void Poll()
+        private AnalogConfiguration GetAnalogConfiguration()
         {
-            base.Poll();
-            Task<HidDeviceData> task = hid.GetHidDevice().ReadAsync();
-            task.ContinueWith(_ =>
+            if(analogConfirguration.Equals(default(AnalogConfiguration)))
             {
-                Poll(task.Result);
-            });
+                // will eventually add detection for User generated config
+                analogConfirguration =  controller.GetConfig().GetAnalogConfiguration(ConfigurationType.Factory);
+            }
+            return analogConfirguration;
         }
 
-        public override AnalogConfiguration GetAnalogConfiguration(ConfigurationType type)
+        public override AnalogConfiguration ParseAnalogConfiguration(int[] data)
         {
+            AnalogConfiguration config = new AnalogConfiguration();
 
-            uint offset;
+            config.xCenter = data[0];
+            config.yCenter = data[1];
+            config.xMax = data[4] + config.xCenter;
+            config.yMax = data[5] + config.yCenter;
+            config.xMin = config.xCenter - data[2];
+            config.yMin = config.yCenter - data[3];
 
+            return config;
+        }
+
+        public override int GetAnalogConfigOffset(ConfigurationType type)
+        {
             switch (type)
             {
                 case ConfigurationType.Factory:
-                    offset = 0x6046;
-                    break;
+                    return 0x6046;
                 case ConfigurationType.User:
-                    offset = 0x801D;
-                    break;
+                    return 0x801D;
                 default:
                     goto case ConfigurationType.Factory;
             }
-
-            byte[] data = ReadSPI(offset, 0x12);
-
-            int[] parsed = ParseAnalogConfiguration(data);
-
-            AnalogConfiguration config = new AnalogConfiguration();
-
-            config.xCenter = parsed[0];
-            config.yCenter = parsed[1];
-            config.xMax = parsed[4] + config.xCenter;
-            config.yMax = parsed[5] + config.yCenter;
-            config.xMin = config.xCenter - parsed[2];
-            config.yMin = config.yCenter - parsed[3];
-
-            return config;
         }
     }
 }

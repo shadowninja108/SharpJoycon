@@ -4,36 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HidLibrary;
+using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
 
 namespace Joycon_Glue
 {
     public abstract class InputJoystick
     {
 
-        protected SimplifiedHidDevice hid;
+        public abstract void Poll(PacketData data);
 
-        private bool firstPoll = true;
-
-        public InputJoystick(SimplifiedHidDevice hid)
-        {
-            this.hid = hid;
-        }
-
-        public virtual void Poll()
-        {
-            if (firstPoll)
-            {
-                hid.GetHidDevice().MonitorDeviceEvents = true;
-                hid.GetHidDevice().Read(Poll); // setup callback
-                firstPoll = false;
-            }
-        }
-
-        public abstract void Poll(HidDeviceData data);
         public abstract int ButtonCount();
         public abstract bool GetButton(int id);
         public abstract StickPos GetStick(int id);
-        public abstract POVDirection GetPov();
+        public abstract POVDirection GetPov(int id);
 
         public struct StickPos
         {
@@ -48,7 +31,7 @@ namespace Joycon_Glue
 
         public enum POVDirection
         {
-            Up, Down, Left, Right, None
+            None, Up, Right, Down, Left,
         }
     }
 }

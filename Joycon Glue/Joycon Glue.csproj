@@ -76,12 +76,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Source\Joystick\Controllers\UnknownNintendoController.cs" />
-    <Compile Include="Source\Joystick\Controllers\Joycons\GluedJoycons.cs" />
-    <Compile Include="Source\Joystick\Controllers\Joycons\RightJoycon.cs" />
-    <Compile Include="Source\Joystick\Controllers\Joycons\LeftJoycon.cs" />
-    <Compile Include="Source\Joystick\InputJoystick.cs" />
-    <Compile Include="Source\SimplifiedHidDevice.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controller\Controller.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\SPIAccessor.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\ConfigurationInterface.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\HardwareInterface.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\CommandInterface.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\ControllerInterface.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\AbstractInterface.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\HIDInterface.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\SPIInterface.cs" />
+    <Compile Include="Source\JoyconLib\GluedJoycons.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controller\RightJoycon.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controller\LeftJoycon.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\InputJoystick.cs" />
+    <Compile Include="Source\RandomAccess.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -90,7 +98,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\Joystick\Controllers\NintendoController.cs" />
+    <Compile Include="Source\JoyconLib\NintendoController.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
