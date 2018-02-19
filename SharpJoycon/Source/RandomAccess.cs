@@ -12,7 +12,7 @@ namespace SharpJoycon
         public abstract int Size { get; }
         public abstract bool IsOpen { get; }
 
-        public abstract byte[] Read(int address, int length);
+        public abstract byte[] Read(int address, int length, string file = null);
 
         public byte Read(int address)
         {

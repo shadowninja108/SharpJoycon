@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using static SharpJoycon.Interfaces.HIDInterface;
 
@@ -27,20 +28,25 @@ namespace SharpJoycon.Interfaces.SPI
         }
 
         // should support arbitrary read lengths
-        public override byte[] Read(int address, int length)
+        public override byte[] Read(int address, int length, string file = null)
         {
             decimal reads = Math.Ceiling(((decimal)length / readLimit));
-            byte[] data = new byte[length];
+            byte[] data = null;
+            BinaryWriter writer = null;
+            if (file != null)
+                writer = new BinaryWriter(new FileStream(file, FileMode.Open));
+            else
+                data = new byte[length];
             for (int i = 0; i < reads; i++)
             {
                 int readOffset = i * readLimit;
                 int readAddress = address + readOffset;
                 int readLength = Math.Min(length - readOffset, readLimit);
                 List<byte> outputBytes = new List<byte>(BitConverter.GetBytes(readAddress));
-                outputBytes.Add((byte) length);
+                outputBytes.Add((byte) readLength);
                 byte[] output = outputBytes.ToArray();
                 PacketData packet;
-                Console.WriteLine("Attempting SPI read...");
+                Console.WriteLine($"Attempting SPI read ({i}/{reads})...");
                 int attempts = 0;
                 while(true)
                 {
@@ -51,8 +57,17 @@ namespace SharpJoycon.Interfaces.SPI
                         break;
                 }
                 Console.WriteLine($"SPI read took {attempts} attempts");
-                Array.Copy(packet.data.Skip(5).ToArray(), 0, data, readOffset, readLength);
+                byte[] readData = packet.data.Skip(5).ToArray();
+                if (writer == null)
+                    Array.Copy(readData, 0, data, readOffset, readLength);
+                else
+                {
+                    writer.Seek(readOffset, SeekOrigin.Begin);
+                    writer.Write(readData, 0, readData.Length);
+                }
             }
+            if (writer != null)
+                writer.Close();
             return data;
         }
 
