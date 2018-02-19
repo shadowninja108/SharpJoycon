@@ -32,9 +32,9 @@ namespace SharpJoycon.Interfaces.SPI
         {
             decimal reads = Math.Ceiling(((decimal)length / readLimit));
             byte[] data = null;
-            BinaryWriter writer = null;
+            FileStream stream = null;
             if (file != null)
-                writer = new BinaryWriter(new FileStream(file, FileMode.Open));
+                stream = new FileStream(file, FileMode.Open);
             else
                 data = new byte[length];
             for (int i = 0; i < reads; i++)
@@ -46,28 +46,29 @@ namespace SharpJoycon.Interfaces.SPI
                 outputBytes.Add((byte) readLength);
                 byte[] output = outputBytes.ToArray();
                 PacketData packet;
-                Console.WriteLine($"Attempting SPI read ({i}/{reads})...");
+                Console.WriteLine($"Attempting SPI read ({i+1}/{reads})...");
                 int attempts = 0;
                 while(true)
                 {
-                    // spam because why not?
+                    // spam cause the input reports clutter everything
+                    // switching modes also takes time meaning switching it would cost more time
                     attempts++;
                     packet = command.SendSubcommand(0x1, 0x10, output);
                     if (output.SequenceEqual(packet.data.Take(output.Length)))
                         break;
                 }
-                Console.WriteLine($"SPI read took {attempts} attempts");
+                Console.WriteLine($"SPI read took {attempts} attempt{(attempts==1 ? "" : "s")}"); // lol grammar
                 byte[] readData = packet.data.Skip(5).ToArray();
-                if (writer == null)
+                if (stream == null)
                     Array.Copy(readData, 0, data, readOffset, readLength);
                 else
                 {
-                    writer.Seek(readOffset, SeekOrigin.Begin);
-                    writer.Write(readData, 0, readData.Length);
+                    stream.Seek(readOffset, SeekOrigin.Begin);
+                    stream.Write(readData, 0, readData.Length);
                 }
             }
-            if (writer != null)
-                writer.Close();
+            if (stream != null)
+                stream.Close();
             return data;
         }
 

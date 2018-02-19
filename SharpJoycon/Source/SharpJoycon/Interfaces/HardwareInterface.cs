@@ -51,7 +51,7 @@ namespace SharpJoycon.Interfaces
                     if (header[13] == 0x82 && header[14] == 2)
                         break;
                 }
-                Console.WriteLine($"Device info took {i} attempts");
+                Console.WriteLine($"Device info took {i} attempt{(i == 1 ? "" : "s")}"); // lol grammar
                 deviceInfo = new DeviceInfo();
                 byte[] firmware = new byte[2];
                 Array.Copy(data, firmware, 2);
