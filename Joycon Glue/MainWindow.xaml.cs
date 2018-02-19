@@ -6,15 +6,12 @@ using System.Collections.Generic;
 
 using vJoyInterfaceWrap;
 using HidLibrary;
-using System.Text;
-using System.Runtime.InteropServices;
+
 using Joycon_Glue.Source.Joystick;
-using Joycon_Glue.Source.Joystick.Controllers;
-using Microsoft.Win32.SafeHandles;
-using System.IO;
+
 using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
 using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HardwareInterface;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
+
 
 namespace Joycon_Glue
 {
@@ -24,7 +21,9 @@ namespace Joycon_Glue
     /// 
     public partial class MainWindow : Window
     {
+        vJoy.JoystickState state;
         vJoy joystick;
+        GluedJoycons glued;
         private uint vjd = 0;
 
         public MainWindow()
@@ -83,7 +82,7 @@ namespace Joycon_Glue
             // pretty much following this guy's implementation
             // https://github.com/mfosse/JoyCon-Driver
 
-            IList<HidDevice> devices = HidDevices.Enumerate(0x057e).ToList();
+           IList<HidDevice> devices = HidDevices.Enumerate(0x057e).ToList();
             NintendoController leftJoycon = null;
             NintendoController rightJoycon = null;
             foreach (HidDevice device in devices)
@@ -92,6 +91,11 @@ namespace Joycon_Glue
                 Console.WriteLine("Detected Nintendo device.");
                 NintendoController controller = new NintendoController(device);
                 HardwareInterface hardware = controller.GetHardware();
+                CommandInterface command = controller.GetCommands();
+               // command.SendSubcommand(0x1, 0x1, new byte[] { 0x1 });
+                //command.SendSubcommand(0x1, 0x1, new byte[] { 0x2 });
+                //command.SendSubcommand(0x1, 0x1, new byte[] { 0x3 });
+                hardware.SetReportMode(0x3F); // 60hz update mode
                 hardware.SetVibration(true);
                 hardware.SetIMU(true);
                 hardware.SetPlayerLights(PlayerLightState.Player1);
@@ -113,31 +117,34 @@ namespace Joycon_Glue
                 hardware.SetReportMode(0x30); // 60hz update mode
             }
             Console.WriteLine("Found all devices.");
-            GluedJoycons glued = new GluedJoycons(leftJoycon, rightJoycon);
+            glued = new GluedJoycons(leftJoycon, rightJoycon);
             joystick.ResetVJD(vjd);
             while (true)
             {
                 glued.Poll();
+                state = new vJoy.JoystickState();
+                //Console.WriteLine($"Elasped time: {stopwatch.Elapsed.TotalSeconds }");
 
                 //buttons
-                for (int i = 1; i <= glued.ButtonCount(); i++)
-                {
-                    // Console.WriteLine($"{i} = {device.GetButton(i)}");
-                    joystick.SetBtn(glued.GetButton(i), vjd, (uint)i);
-                }
+                state.Buttons = glued.GetButtonData();
+
 
                 //pov
-                int povValue = (int)glued.GetPov() -1;
-                joystick.SetDiscPov(povValue, vjd, 1);
+                state.bHats = 0;
+                //int povValue = (int)glued.GetPov() -1;
+                // joystick.SetDiscPov(povValue, vjd, 1);
 
                 //sticks
                 InputJoystick.StickPos leftPos = glued.GetStick(0);
+                state.AxisX = leftPos.x;
+                state.AxisY = leftPos.y;
+
                 InputJoystick.StickPos rightPos = glued.GetStick(1);
-                joystick.SetAxis(leftPos.x, vjd, HID_USAGES.HID_USAGE_X);
-                joystick.SetAxis(leftPos.y, vjd, HID_USAGES.HID_USAGE_Y);
-                joystick.SetAxis(rightPos.x, vjd, HID_USAGES.HID_USAGE_RX);
-                joystick.SetAxis(rightPos.y, vjd, HID_USAGES.HID_USAGE_RY);
-                Thread.Sleep(16);
+                state.AxisXRot = rightPos.x;
+                state.AxisYRot = rightPos.y;
+
+                joystick.UpdateVJD(vjd, ref state);
+                //Thread.Sleep(16);
             }
         }
     }    

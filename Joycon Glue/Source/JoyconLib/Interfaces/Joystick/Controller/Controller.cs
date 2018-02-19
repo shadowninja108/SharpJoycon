@@ -1,6 +1,7 @@
 ﻿using HidLibrary;
 using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,20 @@ namespace Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller
         }
 
         public abstract Buttons GetButtons();
+
+        public override uint GetButtonData()
+        {
+            Buttons buttons = GetButtons();
+            bool[] bits = new bool[ButtonCount()];
+            for (int i = 1; i <= bits.Length; i++)
+            {
+                bits[i - 1] = GetButton(i);
+            }
+            BitArray array = new BitArray(bits);
+            int[] ints = new int[1];
+            array.CopyTo(ints, 0);
+            return (uint) ints[0];
+        }
 
         public override bool GetButton(int id)
         {

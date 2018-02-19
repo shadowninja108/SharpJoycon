@@ -1,9 +1,7 @@
 ﻿using HidLibrary;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
 {
@@ -23,10 +21,12 @@ namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
 
         public PacketData ReadPacket()
         {
+
             PacketData packet = new PacketData();
             byte[] data = ReadData();
             packet.header = data.Take(15).ToArray();
             packet.data = data.Skip(15).ToArray();
+
             return packet;
         }
 

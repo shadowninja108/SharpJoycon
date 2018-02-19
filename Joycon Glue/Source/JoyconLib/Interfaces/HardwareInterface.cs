@@ -47,9 +47,11 @@ namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
                 while (true)
                 {
                     packet = command.SendSubcommand(0x01, 0x02, null);
+                    Console.WriteLine($"Header: {BitConverter.ToString(packet.header)}");
+                    Console.WriteLine($"Data: {BitConverter.ToString(packet.data)}");
                     byte[] header = packet.header;
                     data = packet.data;
-                    if (header[13] == 0x82 && header[14] == 02)
+                    if (header[13] == 0x82 && header[14] == 2)
                         break;
                 }
                 deviceInfo = new DeviceInfo();

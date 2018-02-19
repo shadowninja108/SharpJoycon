@@ -11,17 +11,22 @@ namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
     {
         private ControllerInterface controller;
         private SPIInterface spi;
+        private HardwareInterface hardware;
 
         public ConfigurationInterface(NintendoController controller) : base(controller)
         {
             this.controller = controller.GetController();
             this.spi = controller.GetSPI();
+            this.hardware = controller.GetHardware();
         }
 
         public AnalogConfiguration GetAnalogConfiguration(ConfigurationType type)
         {
             Controller joystick = controller.GetJoystick();
+            byte mode = hardware.GetReportMode();
+            hardware.SetReportMode(0x3F); // calm down packets
             byte[] data = spi.GetAccessor().Read(joystick.GetAnalogConfigOffset(type), 0x12);
+            hardware.SetReportMode(mode);
             int[] parsedData = ParseAnalogConfiguration(data);
             return joystick.ParseAnalogConfiguration(parsedData);
         }

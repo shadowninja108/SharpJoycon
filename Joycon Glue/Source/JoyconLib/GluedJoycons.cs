@@ -29,11 +29,11 @@ namespace Joycon_Glue.Source.Joystick
             return Math.Max(leftController.ButtonCount(), rightController.ButtonCount()); // rather keep the button count in one place (they are both the same value)
         }
 
-        public bool GetButton(int id)
+        public uint GetButtonData()
         {
             Controller leftController = leftJoycon.GetController().GetJoystick();
             Controller rightController = rightJoycon.GetController().GetJoystick();
-            return leftController.GetButton(id) || rightController.GetButton(id);
+            return leftController.GetButtonData() | rightController.GetButtonData();
         }
 
         public POVDirection GetPov()

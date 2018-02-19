@@ -61,9 +61,14 @@ namespace Joycon_Glue.Source.Joystick
 
                 float posXf = (posX - config.xMin) / (float) config.xMax;
                 float posYf = (posY - config.yMin) / (float) config.yMax;
-                posYf = 1 - posYf;
+                posYf = 1 - posYf; // invert axis
                 posX = (int) (posXf * 32767f);
                 posY = (int) (posYf * 32767f);
+
+
+                Console.WriteLine($"xMin: {config.xMin} | xCenter: {config.xCenter} | xMax: {config.xMax}");
+                Console.WriteLine($"yMin: {config.yMin} | yCenter: {config.yCenter} | yMax: {config.yMax}");
+                Console.WriteLine($"posX: {posX} | posY: {posY}");
 
                 pos = new StickPos(posX, posY);
             }
@@ -108,7 +113,7 @@ namespace Joycon_Glue.Source.Joystick
             if (analogConfirguration.Equals(default(AnalogConfiguration)))
             {
                 // will eventually add detection for User generated config
-                analogConfirguration = controller.GetConfig().GetAnalogConfiguration(ConfigurationType.Factory);
+                analogConfirguration = controller.GetConfig().GetAnalogConfiguration(ConfigurationType.User);
             }
             return analogConfirguration;
         }

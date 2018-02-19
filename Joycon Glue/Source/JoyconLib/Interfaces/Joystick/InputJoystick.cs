@@ -14,6 +14,7 @@ namespace Joycon_Glue
         public abstract void Poll(PacketData data);
 
         public abstract int ButtonCount();
+        public abstract uint GetButtonData();
         public abstract bool GetButton(int id);
         public abstract StickPos GetStick(int id);
         public abstract POVDirection GetPov(int id);

@@ -83,8 +83,8 @@ namespace Joycon_Glue.Source.Joystick
                 float posXf = (posX - config.xMin) / (float)config.xMax;
                 float posYf = (posY - config.yMin) / (float)config.yMax;
                 posYf = 1 - posYf;
-                posX = (int)(posXf * 32767f);
-                posY = (int)(posYf * 32767f);
+                posX = (int)(posXf * 35900f);
+                posY = (int)(posYf * 35900f);
 
                 pos = new StickPos(posX, posY);
             }

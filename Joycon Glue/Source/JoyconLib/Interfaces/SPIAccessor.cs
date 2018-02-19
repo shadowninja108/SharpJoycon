@@ -35,8 +35,10 @@ namespace Joycon_Glue.Source.JoyconLib.Interfaces
             decimal reads = Math.Ceiling(((decimal)length / readLimit));
             byte[] data = new byte[length];
             byte reportMode = controller.GetHardware().GetReportMode();
-            controller.GetHardware().SetReportMode(0x3F); // calm down the packets down to speed up read
-            for(int i = 0; i < reads; i++)
+            HardwareInterface hardware = controller.GetHardware();
+            hardware.SetReportMode(0x3F); // calm down the packets down to speed up read
+            hardware.SetIMU(false);
+            for (int i = 0; i < reads; i++)
             {
                 int readOffset = i * readLimit;
                 int readAddress = address + readOffset;
@@ -54,7 +56,8 @@ namespace Joycon_Glue.Source.JoyconLib.Interfaces
                 }
                 Array.Copy(packet.data.Skip(5).ToArray(), 0, data, readOffset, readLength);
             }
-            controller.GetHardware().SetReportMode(reportMode); // returned to whatever mode was before read
+            hardware.SetIMU(true);
+            hardware.SetReportMode(reportMode); // returned to whatever mode was before read
             return data;
         }
 
