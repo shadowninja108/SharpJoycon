@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HidLibrary;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
+﻿using static SharpJoycon.Interfaces.HIDInterface;
 
-namespace Joycon_Glue
+namespace SharpJoycon.Interfaces.Joystick
 {
     public abstract class InputJoystick
     {

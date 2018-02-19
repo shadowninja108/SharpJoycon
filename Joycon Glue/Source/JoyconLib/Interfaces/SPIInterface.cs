@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
-using Joycon_Glue.Source.JoyconLib.Interfaces;
+﻿using SharpJoycon.Interfaces.SPI;
+using static SharpJoycon.Interfaces.HIDInterface;
 
-namespace Joycon_Glue.Source.Joystick.Controllers
+namespace SharpJoycon.Interfaces
 {
     public class SPIInterface : AbstractInterface
     {
@@ -24,7 +18,7 @@ namespace Joycon_Glue.Source.Joystick.Controllers
             return accessor;
         }
 
-        public override void Poll(HIDInterface.PacketData data)
+        public override void Poll(PacketData data)
         {
             // nothing to read
         }

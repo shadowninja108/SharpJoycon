@@ -1,12 +1,9 @@
-﻿using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
+using static SharpJoycon.Interfaces.HIDInterface;
 
-namespace Joycon_Glue.Source.JoyconLib.Interfaces
+namespace SharpJoycon.Interfaces.SPI
 {
     public class SPIAccessor : RandomAccess
     {
@@ -34,10 +31,6 @@ namespace Joycon_Glue.Source.JoyconLib.Interfaces
         {
             decimal reads = Math.Ceiling(((decimal)length / readLimit));
             byte[] data = new byte[length];
-            byte reportMode = controller.GetHardware().GetReportMode();
-            HardwareInterface hardware = controller.GetHardware();
-            hardware.SetReportMode(0x3F); // calm down the packets down to speed up read
-            hardware.SetIMU(false);
             for (int i = 0; i < reads; i++)
             {
                 int readOffset = i * readLimit;
@@ -47,17 +40,19 @@ namespace Joycon_Glue.Source.JoyconLib.Interfaces
                 outputBytes.Add((byte) length);
                 byte[] output = outputBytes.ToArray();
                 PacketData packet;
+                Console.WriteLine("Attempting SPI read...");
+                int attempts = 0;
                 while(true)
                 {
                     // spam because why not?
+                    attempts++;
                     packet = command.SendSubcommand(0x1, 0x10, output);
                     if (output.SequenceEqual(packet.data.Take(output.Length)))
                         break;
                 }
+                Console.WriteLine($"SPI read took {attempts} attempts");
                 Array.Copy(packet.data.Skip(5).ToArray(), 0, data, readOffset, readLength);
             }
-            hardware.SetIMU(true);
-            hardware.SetReportMode(reportMode); // returned to whatever mode was before read
             return data;
         }
 

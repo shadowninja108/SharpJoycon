@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 
 
-namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
+namespace SharpJoycon.Interfaces
 {
     public class HIDInterface : AbstractInterface
     {
@@ -32,7 +32,7 @@ namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
 
         public byte[] ReadData()
         {
-            return hid.Read().Data;
+           return hid.Read().Data;
         }
 
         public String GetSerialNumber()

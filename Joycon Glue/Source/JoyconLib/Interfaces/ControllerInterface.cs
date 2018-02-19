@@ -1,11 +1,8 @@
-﻿using Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
+using SharpJoycon.Interfaces.Joystick.Controllers;
+
+namespace SharpJoycon.Interfaces
 {
     //TODO: name could be better
     public class ControllerInterface : AbstractInterface

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
+using static SharpJoycon.Interfaces.HIDInterface;
 
-namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
+namespace SharpJoycon.Interfaces
 {
     //TODO: interface seems a bit overloaded, might split later
     public class HardwareInterface : AbstractInterface
@@ -44,16 +40,18 @@ namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
             {
                 PacketData packet;
                 byte[] data;
+                int i = 0;
+                Console.WriteLine("Attempting to get device info...");
                 while (true)
                 {
+                    i++;
                     packet = command.SendSubcommand(0x01, 0x02, null);
-                    Console.WriteLine($"Header: {BitConverter.ToString(packet.header)}");
-                    Console.WriteLine($"Data: {BitConverter.ToString(packet.data)}");
                     byte[] header = packet.header;
                     data = packet.data;
                     if (header[13] == 0x82 && header[14] == 2)
                         break;
                 }
+                Console.WriteLine($"Device info took {i} attempts");
                 deviceInfo = new DeviceInfo();
                 byte[] firmware = new byte[2];
                 Array.Copy(data, firmware, 2);

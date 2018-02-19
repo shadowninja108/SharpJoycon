@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HidLibrary;
-using Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller;
-using static Joycon_Glue.InputJoystick;
-using static Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller.Controller;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.ConfigurationInterface;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
-using static NintendoController;
 
-namespace Joycon_Glue.Source.Joystick
+using static SharpJoycon.Interfaces.ConfigurationInterface;
+using static SharpJoycon.Interfaces.HIDInterface;
+
+namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
     class RightJoycon : Controller 
     {

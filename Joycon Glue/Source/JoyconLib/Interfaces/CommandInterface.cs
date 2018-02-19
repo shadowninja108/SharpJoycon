@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
 
-namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
+using static SharpJoycon.Interfaces.HIDInterface;
+
+namespace SharpJoycon.Interfaces
 {
     public class CommandInterface : AbstractInterface
     {

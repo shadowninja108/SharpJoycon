@@ -5,9 +5,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{47FCC2FC-8B59-4B1D-963D-BE75FE1DDC6F}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>Joycon_Glue</RootNamespace>
-    <AssemblyName>Joycon Glue</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SharpJoycon</RootNamespace>
+    <AssemblyName>SharpJoycon</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -38,6 +38,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,6 +49,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HidLibrary, Version=3.2.46.0, Culture=neutral, processorArchitecture=MSIL">
@@ -72,11 +77,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controller\Controller.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controllers\Controller.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controllers\LeftJoycon.cs" />
+    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controllers\RightJoycon.cs" />
     <Compile Include="Source\JoyconLib\Interfaces\SPIAccessor.cs" />
     <Compile Include="Source\JoyconLib\Interfaces\ConfigurationInterface.cs" />
     <Compile Include="Source\JoyconLib\Interfaces\HardwareInterface.cs" />
@@ -86,23 +90,9 @@
     <Compile Include="Source\JoyconLib\Interfaces\HIDInterface.cs" />
     <Compile Include="Source\JoyconLib\Interfaces\SPIInterface.cs" />
     <Compile Include="Source\JoyconLib\GluedJoycons.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controller\RightJoycon.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controller\LeftJoycon.cs" />
     <Compile Include="Source\JoyconLib\Interfaces\Joystick\InputJoystick.cs" />
     <Compile Include="Source\RandomAccess.cs" />
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Source\JoyconLib\NintendoController.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -127,9 +117,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Libraries\vJoyInterface.lib" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -145,6 +133,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libraries\vJoyInterface.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

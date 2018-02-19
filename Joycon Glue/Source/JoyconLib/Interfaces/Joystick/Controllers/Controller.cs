@@ -1,16 +1,7 @@
-﻿using HidLibrary;
-using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.ConfigurationInterface;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
-using static NintendoController;
+﻿using System.Collections;
+using static SharpJoycon.Interfaces.ConfigurationInterface;
 
-namespace Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller
+namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
     public abstract class Controller : InputJoystick
     {

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Joycon_Glue.Source
+namespace SharpJoycon
 {
     public abstract class RandomAccess
     {

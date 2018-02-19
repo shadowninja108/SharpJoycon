@@ -1,19 +1,9 @@
-﻿using HidLibrary;
-using Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller;
-using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Joycon_Glue.InputJoystick;
-using static Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller.Controller;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.ConfigurationInterface;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HIDInterface;
-using static NintendoController;
+using static SharpJoycon.Interfaces.ConfigurationInterface;
+using static SharpJoycon.Interfaces.HIDInterface;
 
-namespace Joycon_Glue.Source.Joystick
+namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
     public class LeftJoycon : Controller
     {
@@ -65,10 +55,10 @@ namespace Joycon_Glue.Source.Joystick
                 posX = (int) (posXf * 32767f);
                 posY = (int) (posYf * 32767f);
 
-
-                Console.WriteLine($"xMin: {config.xMin} | xCenter: {config.xCenter} | xMax: {config.xMax}");
-                Console.WriteLine($"yMin: {config.yMin} | yCenter: {config.yCenter} | yMax: {config.yMax}");
-                Console.WriteLine($"posX: {posX} | posY: {posY}");
+                // testing reads
+               // Console.WriteLine($"xMin: {config.xMin} | xCenter: {config.xCenter} | xMax: {config.xMax}");
+               // Console.WriteLine($"yMin: {config.yMin} | yCenter: {config.yCenter} | yMax: {config.yMax}");
+              //  Console.WriteLine($"posX: {posX} | posY: {posY}");
 
                 pos = new StickPos(posX, posY);
             }

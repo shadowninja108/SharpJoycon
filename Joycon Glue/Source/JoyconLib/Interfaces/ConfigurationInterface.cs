@@ -1,11 +1,6 @@
-﻿using Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SharpJoycon.Interfaces.Joystick.Controllers;
 
-namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
+namespace SharpJoycon.Interfaces
 {
     public class ConfigurationInterface : AbstractInterface
     {
@@ -24,9 +19,7 @@ namespace Joycon_Glue.Source.Joystick.Controllers.Interfaces
         {
             Controller joystick = controller.GetJoystick();
             byte mode = hardware.GetReportMode();
-            hardware.SetReportMode(0x3F); // calm down packets
             byte[] data = spi.GetAccessor().Read(joystick.GetAnalogConfigOffset(type), 0x12);
-            hardware.SetReportMode(mode);
             int[] parsedData = ParseAnalogConfiguration(data);
             return joystick.ParseAnalogConfiguration(parsedData);
         }

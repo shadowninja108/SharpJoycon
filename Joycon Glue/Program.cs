@@ -1,33 +1,36 @@
 ﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
+using SharpJoycon.Interfaces;
+using SharpJoycon.Interfaces.Joystick;
+using SharpJoycon.Interfaces.Joystick.Controllers;
 using vJoyInterfaceWrap;
-using HidLibrary;
+using static SharpJoycon.Interfaces.HardwareInterface;
+using static SharpJoycon.Interfaces.Joystick.Controllers.Controller;
+using static vJoyInterfaceWrap.vJoy;
 
-using Joycon_Glue.Source.Joystick;
-
-using Joycon_Glue.Source.Joystick.Controllers.Interfaces;
-using static Joycon_Glue.Source.Joystick.Controllers.Interfaces.HardwareInterface;
-
-
-namespace Joycon_Glue
+namespace SharpJoycon
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
-    public partial class MainWindow : Window
+    class Program
     {
-        vJoy.JoystickState state;
-        vJoy joystick;
-        GluedJoycons glued;
-        private uint vjd = 0;
+        static vJoy joystick;
+        static uint vjd;
+        static List<NintendoController> controllers;
+        static GluedJoycons joycons;
 
-        public MainWindow()
+        static void Main(string[] args)
         {
+            EnablevJoy();
+            FindControllers();
+            CreateGluedJoycon();
+            vJoyLoop();
+        }
+
+        public static void EnablevJoy()
+        {
+            Console.WriteLine("Getting vJoy controller...");
             joystick = new vJoy();
             if (joystick.vJoyEnabled())
             {
@@ -54,11 +57,6 @@ namespace Joycon_Glue
                     if (joystick.AcquireVJD(vjd))
                     {
                         Console.WriteLine("Success!");
-                        Thread thread = new Thread(run)
-                        {
-                            IsBackground = true
-                        };
-                        thread.Start();
                     }
                     else
                     {
@@ -77,25 +75,21 @@ namespace Joycon_Glue
             }
         }
 
-        private void run()
+        public static void FindControllers()
         {
-            // pretty much following this guy's implementation
-            // https://github.com/mfosse/JoyCon-Driver
+            Console.WriteLine("Finding Nintendo controllers...");
+            controllers = NintendoController.Discover();
+        }
 
-           IList<HidDevice> devices = HidDevices.Enumerate(0x057e).ToList();
+        public static void CreateGluedJoycon()
+        {
+            Console.WriteLine("Applying some glue...");
             NintendoController leftJoycon = null;
             NintendoController rightJoycon = null;
-            foreach (HidDevice device in devices)
+            foreach (NintendoController controller in controllers)
             {
-                device.OpenDevice();
-                Console.WriteLine("Detected Nintendo device.");
-                NintendoController controller = new NintendoController(device);
                 HardwareInterface hardware = controller.GetHardware();
-                CommandInterface command = controller.GetCommands();
-               // command.SendSubcommand(0x1, 0x1, new byte[] { 0x1 });
-                //command.SendSubcommand(0x1, 0x1, new byte[] { 0x2 });
-                //command.SendSubcommand(0x1, 0x1, new byte[] { 0x3 });
-                hardware.SetReportMode(0x3F); // 60hz update mode
+                hardware.SetReportMode(0x3F); // normal HID mode (should help with SPI reads)
                 hardware.SetVibration(true);
                 hardware.SetIMU(true);
                 hardware.SetPlayerLights(PlayerLightState.Player1);
@@ -116,36 +110,37 @@ namespace Joycon_Glue
                 }
                 hardware.SetReportMode(0x30); // 60hz update mode
             }
-            Console.WriteLine("Found all devices.");
-            glued = new GluedJoycons(leftJoycon, rightJoycon);
+            joycons = new GluedJoycons(leftJoycon, rightJoycon);
+        }
+
+        public static void vJoyLoop()
+        {
             joystick.ResetVJD(vjd);
+            Console.WriteLine("Starting update loop...");
+            JoystickState iReport;
             while (true)
             {
-                glued.Poll();
-                state = new vJoy.JoystickState();
-                //Console.WriteLine($"Elasped time: {stopwatch.Elapsed.TotalSeconds }");
+                iReport = new JoystickState();
+                joycons.Poll();
 
                 //buttons
-                state.Buttons = glued.GetButtonData();
+                iReport.Buttons = joycons.GetButtonData();
 
-
-                //pov
-                state.bHats = 0;
-                //int povValue = (int)glued.GetPov() -1;
-                // joystick.SetDiscPov(povValue, vjd, 1);
+                //pov (still need to work out)
+                //int povValue = (int)joycons.GetPov() - 1;
+                //joystick.SetDiscPov(povValue, vjd, 1);
 
                 //sticks
-                InputJoystick.StickPos leftPos = glued.GetStick(0);
-                state.AxisX = leftPos.x;
-                state.AxisY = leftPos.y;
+                InputJoystick.StickPos leftPos = joycons.GetStick(0);
+                InputJoystick.StickPos rightPos = joycons.GetStick(1);
+                iReport.AxisX = leftPos.x;
+                iReport.AxisY = leftPos.y;
+                iReport.AxisXRot = rightPos.x;
+                iReport.AxisYRot = rightPos.y;
 
-                InputJoystick.StickPos rightPos = glued.GetStick(1);
-                state.AxisXRot = rightPos.x;
-                state.AxisYRot = rightPos.y;
-
-                joystick.UpdateVJD(vjd, ref state);
-                //Thread.Sleep(16);
+                joystick.UpdateVJD(vjd, ref iReport);
+                Thread.Sleep((1/60) * 1000); // joycons update @ 60hz
             }
         }
-    }    
+    }
 }

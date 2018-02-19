@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HidLibrary;
-using Joycon_Glue.Source.JoyconLib.Interfaces.Joystick.Controller;
-using Joycon_Glue.Source.Joystick.Controllers;
-using static Joycon_Glue.InputJoystick;
 
-namespace Joycon_Glue.Source.Joystick
+using SharpJoycon.Interfaces.Joystick;
+using SharpJoycon.Interfaces.Joystick.Controllers;
+
+using static SharpJoycon.Interfaces.Joystick.InputJoystick;
+
+namespace SharpJoycon
 {
     class GluedJoycons
     {
