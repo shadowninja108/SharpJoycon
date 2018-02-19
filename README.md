@@ -1,4 +1,4 @@
-# JoyconGlue
+# SharpJoycon
 A WIP C# library for using the Nintendo Switch Joycons.
 
 First project in C#, so it's likely crappy code.
