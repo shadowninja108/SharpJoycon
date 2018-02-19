@@ -78,21 +78,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controllers\Controller.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controllers\LeftJoycon.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\Controllers\RightJoycon.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\SPIAccessor.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\ConfigurationInterface.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\HardwareInterface.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\CommandInterface.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\ControllerInterface.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\AbstractInterface.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\HIDInterface.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\SPIInterface.cs" />
-    <Compile Include="Source\JoyconLib\GluedJoycons.cs" />
-    <Compile Include="Source\JoyconLib\Interfaces\Joystick\InputJoystick.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\Controller.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\LeftJoycon.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\RightJoycon.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\SPIAccessor.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\ConfigurationInterface.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\HardwareInterface.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\CommandInterface.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\ControllerInterface.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\AbstractInterface.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\HIDInterface.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\SPIInterface.cs" />
+    <Compile Include="Source\SharpJoycon\GluedJoycons.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\Joystick\InputJoystick.cs" />
     <Compile Include="Source\RandomAccess.cs" />
-    <Compile Include="Source\JoyconLib\NintendoController.cs" />
+    <Compile Include="Source\SharpJoycon\NintendoController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -117,7 +117,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Libraries\vJoyInterface.lib" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -133,9 +132,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Libraries\vJoyInterface.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
