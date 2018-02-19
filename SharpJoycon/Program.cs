@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using vJoyInterfaceWrap;
+using static vJoyInterfaceWrap.vJoy;
+
 using SharpJoycon.Interfaces;
 using SharpJoycon.Interfaces.Joystick;
-using SharpJoycon.Interfaces.Joystick.Controllers;
-using vJoyInterfaceWrap;
 using static SharpJoycon.Interfaces.HardwareInterface;
-using static SharpJoycon.Interfaces.Joystick.Controllers.Controller;
-using static vJoyInterfaceWrap.vJoy;
 
 namespace SharpJoycon
 {
@@ -126,9 +125,10 @@ namespace SharpJoycon
                 //buttons
                 iReport.Buttons = joycons.GetButtonData();
 
-                //pov (still need to work out)
-                //int povValue = (int)joycons.GetPov() - 1;
-                //joystick.SetDiscPov(povValue, vjd, 1);
+                //pov
+                uint pov = 0x7FFFFFF0; // set all but the 4 least significant bits to 1
+                pov = pov | ((uint)joycons.GetPov()) - 1;
+                iReport.bHats = pov;
 
                 //sticks
                 InputJoystick.StickPos leftPos = joycons.GetStick(0);
