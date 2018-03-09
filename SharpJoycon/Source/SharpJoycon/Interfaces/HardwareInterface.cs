@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Media;
+using SharpJoycon.Source;
 using static SharpJoycon.Interfaces.HIDInterface;
 
 namespace SharpJoycon.Interfaces
@@ -117,10 +117,10 @@ namespace SharpJoycon.Interfaces
         }
 
         //should this go in ConfigurationInterface?
-        public Color getBodyColor()
+        public Color GetBodyColor()
         {
             byte[] bytes = spi.GetAccessor().Read(0x6050, 0x3);
-            return Color.FromRgb(bytes[0], bytes[1], bytes[2]);
+            return new Color(bytes[0], bytes[1], bytes[2]);
         }
 
         public override void Poll(HIDInterface.PacketData data)

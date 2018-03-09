@@ -1,9 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpJoycon", "SharpJoycon\SharpJoycon.csproj", "{47FCC2FC-8B59-4B1D-963D-BE75FE1DDC6F}"
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpJoycon", "SharpJoycon\SharpJoycon.csproj", "{17A0B2F3-8AA8-4B9A-A0ED-F3EAAFF2A35F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +9,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{47FCC2FC-8B59-4B1D-963D-BE75FE1DDC6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47FCC2FC-8B59-4B1D-963D-BE75FE1DDC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47FCC2FC-8B59-4B1D-963D-BE75FE1DDC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47FCC2FC-8B59-4B1D-963D-BE75FE1DDC6F}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C0906124-6AB3-4AAB-AB56-1E31FCE2A460}
+		{17A0B2F3-8AA8-4B9A-A0ED-F3EAAFF2A35F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17A0B2F3-8AA8-4B9A-A0ED-F3EAAFF2A35F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17A0B2F3-8AA8-4B9A-A0ED-F3EAAFF2A35F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17A0B2F3-8AA8-4B9A-A0ED-F3EAAFF2A35F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

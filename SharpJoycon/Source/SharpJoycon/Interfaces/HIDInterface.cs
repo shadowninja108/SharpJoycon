@@ -1,22 +1,29 @@
-﻿using HidLibrary;
+﻿using HidSharp;
 using System;
 using System.Linq;
-
+using System.Threading;
 
 namespace SharpJoycon.Interfaces
 {
     public class HIDInterface : AbstractInterface
     {
         private HidDevice hid;
+        private HidStream stream;
 
         public HIDInterface(NintendoController controller) : base(controller)
         {
             hid = controller.GetHid();
+            hid.TryOpen(out stream);
         }
 
         public void Write(byte[] bytes)
         {
-            hid.Write(bytes);
+            // can't use regular write operations?
+            // this works so don't argue
+            stream.WriteAsync(bytes, 0, bytes.Length);
+
+            //i can't even do it syncronously???
+            //prob a race condition but whatever
         }
 
         public PacketData ReadPacket()
@@ -32,28 +39,23 @@ namespace SharpJoycon.Interfaces
 
         public byte[] ReadData()
         {
-           return hid.Read().Data;
+            stream.ReadTimeout = Timeout.Infinite; // eh why not
+            return stream.Read();
         }
 
         public String GetSerialNumber()
         {
-            byte[] bytes;
-            hid.ReadSerialNumber(out bytes);
-            return BytesToString(bytes);
+            return hid.GetSerialNumber();
         }
 
         public string GetProductString()
         {
-            byte[] bytes;
-            hid.ReadProduct(out bytes);
-            return BytesToString(bytes);
+            return hid.GetProductName();
         }
 
         public string GetManufacturerString()
         {
-            byte[] bytes;
-            hid.ReadManufacturer(out bytes);
-            return BytesToString(bytes);
+            return hid.GetManufacturer();
         }
 
         private string BytesToString(byte[] input)

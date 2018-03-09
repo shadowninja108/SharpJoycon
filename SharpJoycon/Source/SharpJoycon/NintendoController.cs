@@ -1,7 +1,8 @@
-﻿using HidLibrary;
+﻿using HidSharp;
 using SharpJoycon.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 //joycon m e n
 namespace SharpJoycon
@@ -73,12 +74,11 @@ namespace SharpJoycon
 
         public static List<NintendoController> Discover()
         {
-            List<HidDevice> devices = HidDevices.Enumerate(0x057e).ToList();
+            List<HidDevice> list = DeviceList.Local.GetHidDevices().ToList();
             List<NintendoController> controllers = new List<NintendoController>();
-            foreach(HidDevice device in devices)
-            {
-                device.OpenDevice();
-                controllers.Add(new NintendoController(device));
+            foreach(HidDevice device in list){
+                if (device.VendorID == 0x057e)
+                    controllers.Add(new NintendoController(device));
             }
             return controllers;
         }

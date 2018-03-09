@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using static SharpJoycon.Interfaces.ConfigurationInterface;
 using static SharpJoycon.Interfaces.HIDInterface;
