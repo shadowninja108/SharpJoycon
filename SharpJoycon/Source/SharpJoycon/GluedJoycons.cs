@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Diagnostics;
 using SharpJoycon.Interfaces.Joystick;
 using SharpJoycon.Interfaces.Joystick.Controllers;
 
@@ -29,8 +29,8 @@ namespace SharpJoycon
         public uint GetButtonData()
         {
             Controller leftController = leftJoycon.GetController().GetJoystick();
-            //Controller rightController = rightJoycon.GetController().GetJoystick();
-            return leftController.GetButtonData(); //| rightController.GetButtonData();
+            Controller rightController = rightJoycon.GetController().GetJoystick();
+            return leftController.GetButtonData() | rightController.GetButtonData();
         }
 
         public POVDirection GetPov()
