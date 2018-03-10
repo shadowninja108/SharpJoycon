@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using SharpJoycon.Interfaces.SPI;
 using SharpJoycon.Source;
 using static SharpJoycon.Interfaces.HIDInterface;
 
@@ -119,7 +121,9 @@ namespace SharpJoycon.Interfaces
         //should this go in ConfigurationInterface?
         public Color GetBodyColor()
         {
-            byte[] bytes = spi.GetAccessor().Read(0x6050, 0x3);
+            SPIStream stream = spi.GetStream();
+            stream.Seek(0x6050, SeekOrigin.Begin);
+            byte[] bytes = stream.Read(0, 0x3);
             return new Color(bytes[0], bytes[1], bytes[2]);
         }
 

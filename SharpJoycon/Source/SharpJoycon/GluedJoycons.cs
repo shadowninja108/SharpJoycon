@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using SharpJoycon.Interfaces.Joystick;
 using SharpJoycon.Interfaces.Joystick.Controllers;
 
 using static SharpJoycon.Interfaces.Joystick.InputJoystick;
@@ -50,14 +49,21 @@ namespace SharpJoycon
                 case 1:
                     return rightController.GetStick(0);
                 default:
-                    return new InputJoystick.StickPos();
+                    return new StickPos();
             }
         }
 
         public void Poll()
         {
+            //Stopwatch stopwatch = new Stopwatch();
+            //stopwatch.Start();
             leftJoycon.Poll();
+            //stopwatch.Stop();
+            //Console.WriteLine($"Polling the left joycon took {stopwatch.Elapsed.TotalMilliseconds} milliseconds");
+            //stopwatch.Start();
             rightJoycon.Poll();
+            //stopwatch.Stop();
+            //Console.WriteLine($"Polling the right joycon took {stopwatch.Elapsed.TotalMilliseconds} milliseconds");
         }
     }
 }

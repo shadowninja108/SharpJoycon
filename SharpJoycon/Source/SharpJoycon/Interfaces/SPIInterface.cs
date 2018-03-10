@@ -6,16 +6,16 @@ namespace SharpJoycon.Interfaces
     public class SPIInterface : AbstractInterface
     {
 
-        private SPIAccessor accessor;
+        private SPIStream stream;
 
         public SPIInterface(NintendoController controller) : base(controller)
         {
-            accessor = new SPIAccessor(controller);
+            stream = new SPIStream(controller);
         }
 
-        public SPIAccessor GetAccessor()
+        public SPIStream GetStream()
         {
-            return accessor;
+            return stream;
         }
 
         public override void Poll(PacketData data)

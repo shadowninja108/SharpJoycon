@@ -1,4 +1,7 @@
-﻿using SharpJoycon.Interfaces.Joystick.Controllers;
+﻿using System.IO;
+
+using SharpJoycon.Interfaces.Joystick.Controllers;
+using SharpJoycon.Interfaces.SPI;
 
 namespace SharpJoycon.Interfaces
 {
@@ -18,8 +21,9 @@ namespace SharpJoycon.Interfaces
         public AnalogConfiguration GetAnalogConfiguration(ConfigurationType type)
         {
             Controller joystick = controller.GetJoystick();
-            byte mode = hardware.GetReportMode();
-            byte[] data = spi.GetAccessor().Read(joystick.GetAnalogConfigOffset(type), 0x12);
+            SPIStream stream = spi.GetStream();
+            stream.Seek(joystick.GetAnalogConfigOffset(type), SeekOrigin.Begin);
+            byte[] data = stream.Read(0, 0x12);
             int[] parsedData = ParseAnalogConfiguration(data);
             return joystick.ParseAnalogConfiguration(parsedData);
         }

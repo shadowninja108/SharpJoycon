@@ -1,5 +1,6 @@
 ﻿using HidSharp;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -18,12 +19,8 @@ namespace SharpJoycon.Interfaces
 
         public void Write(byte[] bytes)
         {
-            // can't use regular write operations?
-            // this works so don't argue
-            stream.WriteAsync(bytes, 0, bytes.Length);
-
-            //i can't even do it syncronously???
-            //prob a race condition but whatever
+            // truncate to fit into the max output report length
+            stream.Write(bytes.Take(hid.GetMaxOutputReportLength()).ToArray());
         }
 
         public PacketData ReadPacket()
@@ -39,8 +36,9 @@ namespace SharpJoycon.Interfaces
 
         public byte[] ReadData()
         {
-            stream.ReadTimeout = Timeout.Infinite; // eh why not
-            return stream.Read();
+            byte[] buffer = new byte[hid.GetMaxInputReportLength()];
+            stream.Read(buffer, 0, buffer.Length);
+            return buffer;
         }
 
         public String GetSerialNumber()
