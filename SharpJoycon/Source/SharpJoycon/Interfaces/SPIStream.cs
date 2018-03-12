@@ -42,7 +42,6 @@ namespace SharpJoycon.Interfaces.SPI
         {
             byte[] buffer = new byte[count];
             int bytes = Read(buffer, offset, count);
-            Seek(bytes, SeekOrigin.Current);
             return buffer;
         }
 
@@ -73,7 +72,7 @@ namespace SharpJoycon.Interfaces.SPI
                             break;
                     }
                     Console.WriteLine($"SPI read took {attempts} attempt{(attempts == 1 ? "" : "s")}"); // lol grammar
-                    Array.Copy(packet.data.Skip(5).ToArray(), 0, data, 0, readLength);
+                    data = packet.data.Skip(5).Take(readLength).ToArray();
                     progress.Report(data);
                 }
             }); 
@@ -81,17 +80,15 @@ namespace SharpJoycon.Interfaces.SPI
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int pos = 0;
-            int bytesRead = 0;
+            MemoryStream stream = new MemoryStream(buffer);
             Progress<byte[]> progress = new Progress<byte[]>();
             progress.ProgressChanged += (d,data) =>
             {
-                bytesRead += data.Length;
-                Array.Copy(data, 0, buffer, pos, data.Length);
-                pos += data.Length;
+                stream.Write(data, 0, data.Length);
             };
             ReadAsync(offset, count, progress).Wait();
-            return bytesRead;
+            Seek(stream.Length, SeekOrigin.Current);
+            return (int) stream.Length;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -109,6 +106,16 @@ namespace SharpJoycon.Interfaces.SPI
                     break;
             }
             return Position;
+        }
+
+        public new void CopyTo(Stream stream)
+        {
+            Progress<byte[]> progress = new Progress<byte[]>();
+            progress.ProgressChanged += (d, data) =>
+            {
+                stream.Write(data, 0, data.Length);
+            };
+            ReadAsync((int) Position, (int) Length, progress).Wait();
         }
 
         public override void SetLength(long value)

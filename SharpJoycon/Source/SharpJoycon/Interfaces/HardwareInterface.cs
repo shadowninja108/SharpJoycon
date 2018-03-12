@@ -46,6 +46,7 @@ namespace SharpJoycon.Interfaces
                 Console.WriteLine("Attempting to get device info...");
                 while (true)
                 {
+                    // takes its time responding???
                     i++;
                     packet = command.SendSubcommand(0x01, 0x02, null);
                     byte[] header = packet.header;
@@ -94,12 +95,13 @@ namespace SharpJoycon.Interfaces
             command.SendSubcommand(0x1, 0x30, data);
         }
 
+        // should be moved to RumbleInterface when implemented
         public void SetVibration(bool enable)
         {
             command.SendSubcommand(0x1, 0x48, new byte[] { Convert.ToByte(enable) });
         }
 
-        // should be moved to IMUInterface when implemented?
+        // should be moved to IMUInterface when implemented
         public void SetIMU(bool enable)
         {
             command.SendSubcommand(0x01, 0x40, new byte[] { Convert.ToByte(enable) });
@@ -114,7 +116,7 @@ namespace SharpJoycon.Interfaces
 
         public byte GetReportMode()
         {
-            // hopefully doesn't change without being told
+            // don't know how to check so i just hope that it never changes
             return reportMode;
         }
 
@@ -127,7 +129,7 @@ namespace SharpJoycon.Interfaces
             return new Color(bytes[0], bytes[1], bytes[2]);
         }
 
-        public override void Poll(HIDInterface.PacketData data)
+        public override void Poll(PacketData data)
         {
             // nothing to read
         }

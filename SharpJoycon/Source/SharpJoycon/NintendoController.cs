@@ -23,7 +23,7 @@ namespace SharpJoycon
             this.device = device;
         }
 
-        public HidDevice GetHid() => device;
+        public HidDevice GetRawHID() => device;
 
         public HIDInterface GetHID()
         {

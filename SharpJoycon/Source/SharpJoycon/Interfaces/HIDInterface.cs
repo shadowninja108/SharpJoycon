@@ -13,8 +13,11 @@ namespace SharpJoycon.Interfaces
 
         public HIDInterface(NintendoController controller) : base(controller)
         {
-            hid = controller.GetHid();
+            hid = controller.GetRawHID();
             hid.TryOpen(out stream);
+            // not the best but at least it doesn't crash when it decides to take its time
+            stream.ReadTimeout = Timeout.Infinite;
+            stream.WriteTimeout = Timeout.Infinite;
         }
 
         public void Write(byte[] bytes)
