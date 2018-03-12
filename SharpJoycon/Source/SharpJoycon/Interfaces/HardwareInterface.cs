@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using SharpJoycon.Interfaces.SPI;
-using SharpJoycon.Source;
+using SharpJoycon.Utilities;
 using static SharpJoycon.Interfaces.HIDInterface;
 
 namespace SharpJoycon.Interfaces

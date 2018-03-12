@@ -17,6 +17,7 @@ namespace SharpJoycon
         private ConfigurationInterface config;
         private HardwareInterface hardware;
         private ControllerInterface controller;
+        private HomeLEDInterface homeLED;
 
         public NintendoController(HidDevice device)
         {
@@ -59,6 +60,12 @@ namespace SharpJoycon
         {
             hardware = hardware ?? new HardwareInterface(this);
             return hardware;
+        }
+
+        public HomeLEDInterface GetHomeLED()
+        {
+            homeLED = homeLED ?? new HomeLEDInterface(this);
+            return homeLED;
         }
 
         public void Poll()
