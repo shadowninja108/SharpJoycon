@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using static SharpJoycon.Interfaces.ConfigurationInterface;
@@ -21,9 +22,9 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             return buttons;
         }
 
-        public override POVDirection GetPov(int id)
+        public override List<POVDirection> GetPov(int id)
         {
-            return POVDirection.None;
+            return new List<POVDirection>();
         }
 
         public override StickPos GetStick(int id)

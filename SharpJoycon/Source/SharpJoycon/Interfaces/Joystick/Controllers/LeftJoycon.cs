@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using static SharpJoycon.Interfaces.ConfigurationInterface;
 using static SharpJoycon.Interfaces.HIDInterface;
@@ -80,8 +81,9 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             }
         }
 
-        public override POVDirection GetPov(int id)
+        public override List<POVDirection> GetPov(int id)
         {
+            List<POVDirection> directions = new List<POVDirection>();
             if (id == 0)
             {
                 bool up = GetButtons().povUp;
@@ -89,13 +91,12 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
                 bool left = GetButtons().povLeft;
                 bool right = GetButtons().povRight;
 
-                if (up) return POVDirection.Up;
-                if (down) return POVDirection.Down;
-                if (left) return POVDirection.Left;
-                if (right) return POVDirection.Right;
-                return POVDirection.None;
+                if (up) directions.Add(POVDirection.Up);
+                if (down) directions.Add(POVDirection.Down);
+                if (left) directions.Add(POVDirection.Left);
+                if (right) directions.Add(POVDirection.Right);
             }
-            return POVDirection.None;
+            return directions;
         }
 
         private AnalogConfiguration GetAnalogConfiguration()

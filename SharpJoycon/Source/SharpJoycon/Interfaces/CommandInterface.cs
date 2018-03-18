@@ -44,7 +44,7 @@ namespace SharpJoycon.Interfaces
         private void IncreasePacketNumber()
         {
             packetNumber++;
-            if (packetNumber < 0xF)
+            if (packetNumber > 0xF)
                 packetNumber = 0;
         }
 

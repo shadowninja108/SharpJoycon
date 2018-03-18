@@ -2,7 +2,6 @@
 using SharpJoycon.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 //joycon m e n
 namespace SharpJoycon

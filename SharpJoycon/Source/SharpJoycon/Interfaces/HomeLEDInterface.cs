@@ -1,9 +1,6 @@
-﻿using SharpJoycon.Interfaces;
-using SharpJoycon.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Text;
+using SharpJoycon.Utilities;
 using static SharpJoycon.Interfaces.HardwareInterface;
 
 namespace SharpJoycon.Interfaces
@@ -35,10 +32,11 @@ namespace SharpJoycon.Interfaces
         {
             byte[] bytes = new byte[25];
             MemoryStream stream = new MemoryStream(bytes);
-            stream.WriteByte(Nibble.Combine((byte) pattern.miniCycles.Length, pattern.miniCycleDuration));
+            stream.WriteByte(Nibble.Combine((byte) Math.Min(15,pattern.miniCycles.Length), pattern.miniCycleDuration));
             stream.WriteByte(Nibble.Combine(pattern.startIntensity, pattern.cycleCount));
             MiniCycle[] miniCycles = pattern.miniCycles;
-            for (int i = 0; i < miniCycles.Length / 2; i+=2)
+            // code will ignore more than 15 mini cycles
+            for (int i = 0; i < Math.Min(14, miniCycles.Length) / 2; i+=2)
             {
                 MiniCycle mc1 = miniCycles[i];
                 MiniCycle mc2 = miniCycles[i + 1];
@@ -51,21 +49,20 @@ namespace SharpJoycon.Interfaces
                 stream.WriteByte((byte) (miniCycles[14].intensity >> 4));
                 stream.WriteByte(miniCycles[14].durationMultiplier);
             }
-            Console.WriteLine(BitConverter.ToString(stream.ToArray()));
             return stream.ToArray();
         }
 
         public static Pattern GetHeartbeatPattern()
         {
-            // 12 minicycles
-            // 1 = duration multiplier, the duration in the minicycle will be multiplied by this
-            // 0 = start intensity of led
-            // 0 = how many cycles/repeats, zero means repeat forever
+            // 12 minicycles (0-15)
+            // 1 = duration multiplier, the duration in the minicycle will be multiplied by this (0-15)
+            // 0 = start intensity of led (0-15)
+            // 0 = how many cycles/repeats, zero means repeat forever (0-15)
             Pattern pattern = new Pattern(12, 1, 0, 0);
             MiniCycle[] miniCycles = pattern.miniCycles;
             
-            //15 = intensity of led
-            //0xF0 * duration multiplier = length of minicycle
+            //15 = intensity of led (0-15)
+            //0xF0 * duration multiplier = length of minicycle (0-255)
             //"bum"
             miniCycles[0] = new MiniCycle(15, 0xF0);
             //wait

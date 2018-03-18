@@ -1,4 +1,5 @@
-﻿using static SharpJoycon.Interfaces.HIDInterface;
+﻿using System.Collections.Generic;
+using static SharpJoycon.Interfaces.HIDInterface;
 
 namespace SharpJoycon.Interfaces.Joystick
 {
@@ -11,7 +12,7 @@ namespace SharpJoycon.Interfaces.Joystick
         public abstract uint GetButtonData();
         public abstract bool GetButton(int id);
         public abstract StickPos GetStick(int id);
-        public abstract POVDirection GetPov(int id);
+        public abstract List<POVDirection> GetPov(int id);
 
         public struct StickPos
         {
@@ -26,7 +27,24 @@ namespace SharpJoycon.Interfaces.Joystick
 
         public enum POVDirection
         {
-            None, Up, Right, Down, Left,
+             Up, Right, Down, Left,
+        }
+
+        //would have made this an enum method, but they don't exist
+        public static int GetPOVMultiplier(POVDirection dir)
+        {
+            switch (dir)
+            {
+                case POVDirection.Up:
+                    return 1;
+                case POVDirection.Right:
+                    return 3;
+                case POVDirection.Down:
+                    return 5;
+                case POVDirection.Left:
+                    return 7;
+            }
+            return 0;
         }
     }
 }

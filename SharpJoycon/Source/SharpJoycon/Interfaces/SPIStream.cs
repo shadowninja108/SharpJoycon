@@ -21,7 +21,6 @@ namespace SharpJoycon.Interfaces.SPI
         public override bool CanWrite => false;
         public override bool CanSeek => true;
         public override long Length => 0x10000 + 0x70000;
-
         // could this be simplified?
         public override long Position { get => pos; set => pos = value; }
 
@@ -75,7 +74,7 @@ namespace SharpJoycon.Interfaces.SPI
                     data = packet.data.Skip(5).Take(readLength).ToArray();
                     progress.Report(data);
                 }
-            }); 
+            });
         }
 
         public override int Read(byte[] buffer, int offset, int count)
