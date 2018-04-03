@@ -4,7 +4,7 @@ namespace SharpJoycon.Interfaces
 {
     public abstract class AbstractInterface
     {
-        private NintendoController controller;
+        protected NintendoController controller;
 
         public AbstractInterface(NintendoController controller)
         {

@@ -11,10 +11,6 @@ namespace SharpJoycon.Interfaces
 
         public HomeLEDInterface(NintendoController controller) : base(controller)
         {
-            if (!controller.GetHardware().GetControllerType().Equals(ControllerType.RightJoycon))
-            {
-                throw new InvalidOperationException();
-            }
             command = controller.GetCommands();
         }
 

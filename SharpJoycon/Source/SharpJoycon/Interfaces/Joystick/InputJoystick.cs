@@ -11,14 +11,14 @@ namespace SharpJoycon.Interfaces.Joystick
         public abstract int ButtonCount();
         public abstract uint GetButtonData();
         public abstract bool GetButton(int id);
-        public abstract StickPos GetStick(int id);
-        public abstract List<POVDirection> GetPov(int id);
+        public abstract Position GetStick(int id);
+        public abstract POVDirection GetPov(int id);
 
-        public struct StickPos
+        public struct Position
         {
             public int x, y;
 
-            public StickPos(int x, int y)
+            public Position(int x, int y)
             {
                 this.x = x;
                 this.y = y;
@@ -27,24 +27,14 @@ namespace SharpJoycon.Interfaces.Joystick
 
         public enum POVDirection
         {
-             Up, Right, Down, Left,
+             None, Up, UpRight, Right, RightDown, Down, DownLeft, Left, LeftUp
         }
 
         //would have made this an enum method, but they don't exist
         public static int GetPOVMultiplier(POVDirection dir)
         {
-            switch (dir)
-            {
-                case POVDirection.Up:
-                    return 1;
-                case POVDirection.Right:
-                    return 3;
-                case POVDirection.Down:
-                    return 5;
-                case POVDirection.Left:
-                    return 7;
-            }
-            return 0;
+
+            return ((int)dir) - 1;
         }
     }
 }

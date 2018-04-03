@@ -28,13 +28,7 @@ namespace SharpJoycon.Interfaces
 
         public PacketData ReadPacket()
         {
-
-            PacketData packet = new PacketData();
-            byte[] data = ReadData();
-            packet.header = data.Take(15).ToArray();
-            packet.data = data.Skip(15).ToArray();
-
-            return packet;
+            return new PacketData(ReadData());
         }
 
         public byte[] ReadData()
@@ -70,14 +64,24 @@ namespace SharpJoycon.Interfaces
             return str;
         }
 
-        public override void Poll(HIDInterface.PacketData data)
+        public override void Poll(PacketData data)
         {
             // nothing to read
         }
 
-        public struct PacketData
+        public class PacketData
         {
-            public byte[] header, data;
+
+            public readonly byte[] rawData;
+
+            public byte[] header => rawData.Take(15).ToArray();
+            public byte[] data => rawData.Skip(15).ToArray();
+
+            public PacketData(byte[] packet)
+            {
+                this.rawData = packet;
+            }
+
         }
     }
 }

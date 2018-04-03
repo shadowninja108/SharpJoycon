@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static SharpJoycon.Interfaces.ConfigurationInterface;
@@ -6,23 +7,18 @@ using static SharpJoycon.Interfaces.HIDInterface;
 
 namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
-    public class LeftJoycon : Controller
+    public class LeftJoycon : Joycon
     {
 
         public LeftJoycon(NintendoController controller) : base(controller)
         {
         }
 
-        private Buttons buttons;
-        private StickPos pos;
-        private AnalogConfiguration analogConfirguration;
-
         public override void Poll(PacketData data)
         {
-            byte[] bytes = data.header.Concat(data.data).ToArray();
+            base.Poll(data);
 
-            //reset to default values
-            buttons = new Buttons();
+            byte[] bytes = data.rawData;
             if (bytes.Length > 0)
             {
                 BitArray leftData = new BitArray(new byte[] { bytes[5] });
@@ -44,46 +40,11 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
                     buttons.stickL = sharedData[3];
                     buttons.capture = sharedData[5];
                 }
-                int offset = 6;
-                int posX = bytes[offset] | ((bytes[offset + 1] & 0xF) << 8);
-                int posY = (bytes[offset] >> 4) | (bytes[offset + 2] << 4);
-
-                AnalogConfiguration config = GetAnalogConfiguration();
-
-                float posXf = (posX - config.xMin) / (float) config.xMax;
-                float posYf = (posY - config.yMin) / (float) config.yMax;
-                posYf = 1 - posYf; // invert axis
-                posX = (int) (posXf * 32767f);
-                posY = (int) (posYf * 32767f);
-
-                // testing reads
-               // Console.WriteLine($"xMin: {config.xMin} | xCenter: {config.xCenter} | xMax: {config.xMax}");
-               // Console.WriteLine($"yMin: {config.yMin} | yCenter: {config.yCenter} | yMax: {config.yMax}");
-              //  Console.WriteLine($"posX: {posX} | posY: {posY}");
-
-                pos = new StickPos(posX, posY);
             }
         }
 
-        public override Buttons GetButtons()
+        public override POVDirection GetPov(int id)
         {
-            return buttons;
-        }
-
-        public override StickPos GetStick(int id)
-        {
-            if(id == 0)
-            {
-                return pos;
-            } else
-            {
-                return new StickPos();
-            }
-        }
-
-        public override List<POVDirection> GetPov(int id)
-        {
-            List<POVDirection> directions = new List<POVDirection>();
             if (id == 0)
             {
                 bool up = GetButtons().povUp;
@@ -91,35 +52,31 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
                 bool left = GetButtons().povLeft;
                 bool right = GetButtons().povRight;
 
-                if (up) directions.Add(POVDirection.Up);
-                if (down) directions.Add(POVDirection.Down);
-                if (left) directions.Add(POVDirection.Left);
-                if (right) directions.Add(POVDirection.Right);
+                // pretty shitty but it works
+                if (up)
+                {
+                    if (right)
+                        return POVDirection.UpRight;
+                    if (left)
+                        return POVDirection.LeftUp;
+                    return POVDirection.Up;
+                }
+                if (right)
+                {
+                    if (down)
+                        return POVDirection.RightDown;
+                    return POVDirection.Right;
+                }
+                if (down)
+                {
+                    if (left)
+                        return POVDirection.DownLeft;
+                    return POVDirection.Down;
+                }
+                if (left)
+                    return POVDirection.Left;
             }
-            return directions;
-        }
-
-        private AnalogConfiguration GetAnalogConfiguration()
-        {
-            if (analogConfirguration.Equals(default(AnalogConfiguration)))
-            {
-                // will eventually add detection for User generated config
-                analogConfirguration = controller.GetConfig().GetAnalogConfiguration(ConfigurationType.User);
-            }
-            return analogConfirguration;
-        }
-
-        public override int GetAnalogConfigOffset(ConfigurationType type)
-        {
-            switch (type)
-            {
-                case ConfigurationType.Factory:
-                    return 0x603D;
-                case ConfigurationType.User:
-                    return 0x8012;
-                default:
-                    goto case ConfigurationType.Factory;
-            }
+            return POVDirection.None;
         }
 
         public override AnalogConfiguration ParseAnalogConfiguration(int[] data)
@@ -134,6 +91,16 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             config.yMin = config.yCenter - data[5];
 
             return config;
+        }
+
+        public override int GetStickDataOffset()
+        {
+            return 6;
+        }
+
+        public override int GetStickConfigOffset(ConfigurationType type)
+        {
+            return GetLeftStickConfigOffset(type);
         }
     }
 }

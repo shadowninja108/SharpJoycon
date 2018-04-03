@@ -17,6 +17,7 @@ namespace SharpJoycon
         private HardwareInterface hardware;
         private ControllerInterface controller;
         private HomeLEDInterface homeLED;
+        private IMUInterface imu;
 
         public NintendoController(HidDevice device)
         {
@@ -67,6 +68,12 @@ namespace SharpJoycon
             return homeLED;
         }
 
+        public IMUInterface GetIMU()
+        {
+            imu = imu ?? new IMUInterface(this);
+            return imu;
+        }
+
         public void Poll()
         {
             HIDInterface.PacketData data = GetHID().ReadPacket();
@@ -76,6 +83,8 @@ namespace SharpJoycon
             GetConfig().Poll(data);
             GetController().Poll(data);
             GetHardware().Poll(data);
+            GetHomeLED().Poll(data);
+            GetIMU().Poll(data);
         }
 
         public static List<NintendoController> Discover()

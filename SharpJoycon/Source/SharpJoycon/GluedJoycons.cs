@@ -38,13 +38,13 @@ namespace SharpJoycon
             return leftController.GetButtonData() | rightController.GetButtonData();
         }
 
-        public List<POVDirection> GetPov()
+        public POVDirection GetPov()
         {
             Controller leftController = GetLeftJoycon();
             return leftController.GetPov(0);
         }
 
-        public StickPos GetStick(int id)
+        public Position GetStick(int id)
         {
             Controller leftController = GetLeftJoycon();
             Controller rightController = GetRightJoycon();
@@ -55,7 +55,7 @@ namespace SharpJoycon
                 case 1:
                     return rightController.GetStick(0);
                 default:
-                    return new StickPos();
+                    return new Position();
             }
         }
 
