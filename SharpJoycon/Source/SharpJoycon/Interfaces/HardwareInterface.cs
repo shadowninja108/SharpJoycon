@@ -49,8 +49,8 @@ namespace SharpJoycon.Interfaces
                     // takes its time responding???
                     i++;
                     packet = command.SendSubcommand(0x01, 0x02, null);
-                    byte[] header = packet.header;
-                    data = packet.data;
+                    byte[] header = packet.Header;
+                    data = packet.Data;
                     if (header[13] == 0x82 && header[14] == 2)
                         break;
                 }

@@ -67,11 +67,11 @@ namespace SharpJoycon.Interfaces.SPI
                         // spam because why not?
                         attempts++;
                         packet = command.SendSubcommand(0x1, 0x10, output);
-                        if (output.SequenceEqual(packet.data.Take(output.Length)))
+                        if (output.SequenceEqual(packet.Data.Take(output.Length)))
                             break;
                     }
                     Console.WriteLine($"SPI read took {attempts} attempt{(attempts == 1 ? "" : "s")}"); // lol grammar
-                    data = packet.data.Skip(5).Take(readLength).ToArray();
+                    data = packet.Data.Skip(5).Take(readLength).ToArray();
                     progress.Report(data);
                 }
             });

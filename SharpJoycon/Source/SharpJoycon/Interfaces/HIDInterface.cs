@@ -53,17 +53,6 @@ namespace SharpJoycon.Interfaces
             return hid.GetManufacturer();
         }
 
-        private string BytesToString(byte[] input)
-        {
-            string str = "";
-            foreach (byte b in input)
-            {
-                if (b > 0)
-                    str += ((char)b).ToString();
-            }
-            return str;
-        }
-
         public override void Poll(PacketData data)
         {
             // nothing to read
@@ -74,12 +63,12 @@ namespace SharpJoycon.Interfaces
 
             public readonly byte[] rawData;
 
-            public byte[] header => rawData.Take(15).ToArray();
-            public byte[] data => rawData.Skip(15).ToArray();
+            public byte[] Header => rawData.Take(15).ToArray();
+            public byte[] Data => rawData.Skip(15).ToArray();
 
             public PacketData(byte[] packet)
             {
-                this.rawData = packet;
+                rawData = packet;
             }
 
         }
