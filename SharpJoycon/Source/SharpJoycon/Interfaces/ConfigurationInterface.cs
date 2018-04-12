@@ -9,20 +9,20 @@ namespace SharpJoycon.Interfaces
 {
     public class ConfigurationInterface : AbstractInterface
     {
-        private ControllerInterface controller;
+        private ControllerInterface joystick;
         private SPIInterface spi;
         private HardwareInterface hardware;
 
         public ConfigurationInterface(NintendoController controller) : base(controller)
         {
-            this.controller = controller.GetController();
+            this.joystick = controller.GetController();
             spi = controller.GetSPI();
             hardware = controller.GetHardware();
         }
 
         public AnalogConfiguration GetAnalogConfiguration(ConfigurationType type)
         {
-            Controller joystick = controller.GetJoystick();
+            Controller joystick = this.joystick.GetJoystick();
             SPIStream stream = spi.GetStream();
             stream.Seek(joystick.GetStickConfigOffset(type), SeekOrigin.Begin);
             byte[] data = stream.Read(0, 0x12);
