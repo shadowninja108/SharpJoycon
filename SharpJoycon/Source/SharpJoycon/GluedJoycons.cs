@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using SharpJoycon.Interfaces;
 using SharpJoycon.Interfaces.Joystick;
@@ -77,17 +78,17 @@ namespace SharpJoycon
 
         public void Poll()
         {
-            //Stopwatch stopwatch = new Stopwatch();
+           // Stopwatch stopwatch = new Stopwatch();
             //stopwatch.Start();
             if(!ReferenceEquals(leftJoycon, null))
                 leftJoycon.Poll();
-            //stopwatch.Stop();
-            //Console.WriteLine($"Polling the left joycon took {stopwatch.Elapsed.TotalMilliseconds} milliseconds");
-            //stopwatch.Start();
+           // stopwatch.Stop();
+           // Console.WriteLine($"Polling the  left joycon took {stopwatch.Elapsed.TotalMilliseconds} milliseconds");
+           // stopwatch.Start();
             if (!ReferenceEquals(rightJoycon, null))
                 rightJoycon.Poll();
-            //stopwatch.Stop();
-            //Console.WriteLine($"Polling the right joycon took {stopwatch.Elapsed.TotalMilliseconds} milliseconds");
+          //  stopwatch.Stop();
+          //  Console.WriteLine($"Polling the right joycon took {stopwatch.Elapsed.TotalMilliseconds} milliseconds");
         }
     }
 }

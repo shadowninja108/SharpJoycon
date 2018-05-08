@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SharpJoycon.Utilities
@@ -14,6 +16,13 @@ namespace SharpJoycon.Utilities
                 output[i] = BitConverter.ToInt16(singular, 0);
             }
             return output;
+        }
+
+        public static void AddAll<T>(this List<T> list, IEnumerable<T> elements)
+        {
+            foreach(T element in elements){
+                list.Add(element);
+            }
         }
     }
 }
