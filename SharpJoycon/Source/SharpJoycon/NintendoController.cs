@@ -92,7 +92,7 @@ namespace SharpJoycon
             List<HidDevice> list = DeviceList.Local.GetHidDevices().ToList();
             List<NintendoController> controllers = new List<NintendoController>();
             foreach(HidDevice device in list){
-                if (device.VendorID == 0x057e)
+                if (device.VendorID == 0x057e) //don't filter by ProductID because i use "official" ways of detecting what controller it is
                     controllers.Add(new NintendoController(device));
             }
             return controllers;

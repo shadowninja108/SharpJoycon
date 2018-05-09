@@ -34,7 +34,7 @@ namespace SharpJoycon.Interfaces
         public byte[] ReadData()
         {
             byte[] buffer = new byte[hid.GetMaxInputReportLength()];
-            stream.Read(buffer, 0, buffer.Length);
+           stream.Read(buffer, 0, buffer.Length);
             return buffer;
         }
 
