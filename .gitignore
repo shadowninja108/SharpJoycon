@@ -31,6 +31,7 @@ Thumbs.db
 # Mac bundle stuff
 *.dmg
 *.app
+.DS_Store
 
 # resharper
 *_Resharper.*
@@ -39,3 +40,4 @@ Thumbs.db
 # dotCover
 *.dotCover
 /.vs
+*.bak

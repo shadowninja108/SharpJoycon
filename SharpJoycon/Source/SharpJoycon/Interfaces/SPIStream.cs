@@ -44,7 +44,7 @@ namespace SharpJoycon.Interfaces.SPI
             return buffer;
         }
 
-        public async Task ReadAsync(int offset, int count, IProgress<byte[]> progress)
+        public async Task ReadAsync(int count, IProgress<byte[]> progress)
         {
             decimal reads = Math.Ceiling(((decimal)count / readLimit));
             byte[] data;
@@ -81,11 +81,12 @@ namespace SharpJoycon.Interfaces.SPI
         {
             MemoryStream stream = new MemoryStream(buffer);
             Progress<byte[]> progress = new Progress<byte[]>();
+            stream.Seek(offset, SeekOrigin.Begin);
             progress.ProgressChanged += (d,data) =>
             {
                 stream.Write(data, 0, data.Length);
             };
-            ReadAsync(offset, count, progress).Wait();
+            ReadAsync(count, progress).Wait(); // wait for the buffer to be filled
             Seek(stream.Length, SeekOrigin.Current);
             return (int) stream.Length;
         }
