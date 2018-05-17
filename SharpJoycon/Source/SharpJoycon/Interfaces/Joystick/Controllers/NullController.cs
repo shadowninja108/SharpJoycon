@@ -26,12 +26,12 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             return new Position();
         }
 
-        public override int GetStickConfigOffset(ConfigurationInterface.ConfigurationType type)
+        public override int GetStickConfigOffset(int id, ConfigurationInterface.ConfigurationType type)
         {
             return 0;
         }
 
-        public override ConfigurationInterface.AnalogConfiguration ParseAnalogConfiguration(int[] data)
+        public override ConfigurationInterface.AnalogConfiguration ParseAnalogConfiguration(int id, int[] data)
         {
             return new ConfigurationInterface.AnalogConfiguration();
         }
