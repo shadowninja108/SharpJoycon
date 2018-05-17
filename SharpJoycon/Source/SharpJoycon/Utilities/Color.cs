@@ -18,6 +18,15 @@
             this.a = a;
         }
 
+        public Color(byte[] colors)
+        {
+            r = colors[0];
+            g = colors[1];
+            b = colors[2];
+            if (colors.Length == 4)
+               a = colors[3];
+        }
+
         public byte GetRed(){
             return r;
         }
@@ -32,6 +41,16 @@
 
         public byte GetAlpha(){
             return a;
+        }
+
+        public byte[] ToBytes()
+        {
+            return new byte[] { r, g, b };
+        }
+
+        public byte[] ToBytesWithAlpha()
+        {
+            return new byte[] { r, g, b ,a};
         }
     }
 }

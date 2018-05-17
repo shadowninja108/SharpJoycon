@@ -1,5 +1,6 @@
 ﻿using HidSharp;
 using SharpJoycon.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -95,6 +96,7 @@ namespace SharpJoycon
                 if (device.VendorID == 0x057e) //don't filter by ProductID because i use "official" ways of detecting what controller it is
                     controllers.Add(new NintendoController(device));
             }
+            Console.WriteLine($"{controllers.Count} controller(s) found.");
             return controllers;
         }
     }

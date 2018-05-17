@@ -15,6 +15,7 @@ namespace SharpJoycon.Interfaces
         {
             hid = controller.GetRawHID();
             hid.TryOpen(out stream);
+
             // not the best but at least it doesn't crash when it decides to take its time
             stream.ReadTimeout = Timeout.Infinite;
             stream.WriteTimeout = Timeout.Infinite;
@@ -34,7 +35,7 @@ namespace SharpJoycon.Interfaces
         public byte[] ReadData()
         {
             byte[] buffer = new byte[hid.GetMaxInputReportLength()];
-           stream.Read(buffer, 0, buffer.Length);
+            stream.Read(buffer, 0, buffer.Length);
             return buffer;
         }
 

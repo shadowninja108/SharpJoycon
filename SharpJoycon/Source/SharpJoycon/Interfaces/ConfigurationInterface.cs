@@ -25,7 +25,7 @@ namespace SharpJoycon.Interfaces
             Controller joystick = this.joystick.GetJoystick();
             SPIStream stream = spi.GetStream();
             stream.Seek(joystick.GetStickConfigOffset(type), SeekOrigin.Begin);
-            byte[] data = stream.Read(0, 0x12);
+            byte[] data = stream.Read(0x12);
             int[] parsedData = ParseAnalogConfiguration(data);
             return joystick.ParseAnalogConfiguration(parsedData);
         }
@@ -34,7 +34,7 @@ namespace SharpJoycon.Interfaces
         {
             SPIStream stream = spi.GetStream();
             stream.Seek(0x6086, SeekOrigin.Begin);
-            byte[] data = stream.Read(0, 0x11);
+            byte[] data = stream.Read(0x11);
             StickParameters param = new StickParameters();
             param.deadzone = data[2];
             param.rangeRatio = data[3];
@@ -57,7 +57,7 @@ namespace SharpJoycon.Interfaces
                     goto case ConfigurationType.Factory;
             }
             stream.Seek(offset, SeekOrigin.Begin);
-            int[] data = stream.Read(0, 0x18).ToInt16();
+            int[] data = stream.Read(0x18).ToInt16();
             IMUConfiguration config = new IMUConfiguration();
             config.xAcc.origin = data[0];
             config.yAcc.origin = data[1];

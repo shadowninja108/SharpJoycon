@@ -125,8 +125,27 @@ namespace SharpJoycon.Interfaces
         {
             SPIStream stream = spi.GetStream();
             stream.Seek(0x6050, SeekOrigin.Begin);
-            byte[] bytes = stream.Read(0, 0x3);
-            return new Color(bytes[0], bytes[1], bytes[2]);
+            return new Color(stream.Read(0x3));
+        }
+        public Color GetButtonColor()
+        {
+            SPIStream stream = spi.GetStream();
+            stream.Seek(0x6053, SeekOrigin.Begin);
+            return new Color(stream.Read(0x3));
+        }
+
+        public void SetBodyColor(Color c)
+        {
+            SPIStream stream = spi.GetStream();
+            stream.Seek(0x6050, SeekOrigin.Begin);
+            stream.Write(c.ToBytes());
+        }
+
+        public void SetButtonColor(Color c)
+        {
+            SPIStream stream = spi.GetStream();
+            stream.Seek(0x6053, SeekOrigin.Begin);
+            stream.Write(c.ToBytes());
         }
 
         public override void Poll(PacketData data)
