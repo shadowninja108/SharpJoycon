@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HidSharp">
-      <HintPath>..\packages\HidSharp.2.0.0.4\lib\net35\HidSharp.dll</HintPath>
+      <HintPath>..\..\JoyconGlue\JoyconGlue\packages\HidSharp.2.0.2\lib\net35\HidSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -49,7 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\SharpJoycon\GluedJoycons.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\AbstractInterface.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\CommandInterface.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\ConfigurationInterface.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\Joycon.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\LeftJoycon.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\NullController.cs" />
+    <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\ProController.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\Joystick\Controllers\RightJoycon.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\Joystick\InputJoystick.cs" />
     <Compile Include="Source\SharpJoycon\Interfaces\SPIInterface.cs" />
@@ -72,9 +72,7 @@
     <Compile Include="Source\SharpJoycon\Utilities\Nibble.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

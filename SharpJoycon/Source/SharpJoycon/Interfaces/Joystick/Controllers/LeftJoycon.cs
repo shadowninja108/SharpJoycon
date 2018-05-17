@@ -9,7 +9,6 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
     public class LeftJoycon : Joycon
     {
-
         public LeftJoycon(NintendoController controller) : base(controller)
         {
         }
@@ -53,6 +52,7 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
                 bool right = GetButtons().povRight;
 
                 // pretty shitty but it works
+                // will fix "eventually"
                 if (up)
                 {
                     if (right)
@@ -79,17 +79,20 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             return POVDirection.None;
         }
 
-        public override AnalogConfiguration ParseAnalogConfiguration(int[] data)
+        public override AnalogConfiguration ParseAnalogConfiguration(int id, int[] data)
         {
             AnalogConfiguration config = new AnalogConfiguration();
+            if (id == 0)
+            {
 
-            config.xCenter = data[2];
-            config.yCenter = data[3];
-            config.xMax = data[0] + config.xCenter;
-            config.yMax = data[1] + config.yCenter;
-            config.xMin = config.xCenter - data[4];
-            config.yMin = config.yCenter - data[5];
-
+                config.xCenter = data[2];
+                config.yCenter = data[3];
+                config.xMax = data[0] + config.xCenter;
+                config.yMax = data[1] + config.yCenter;
+                config.xMin = config.xCenter - data[4];
+                config.yMin = config.yCenter - data[5];
+                return config;
+            }
             return config;
         }
 
@@ -98,9 +101,11 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             return 6;
         }
 
-        public override int GetStickConfigOffset(ConfigurationType type)
+        public override int GetStickConfigOffset(int id, ConfigurationType type)
         {
-            return GetLeftStickConfigOffset(type);
+            if(id == 0)
+                return GetLeftStickConfigOffset(type);
+            return -1;
         }
     }
 }

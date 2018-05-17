@@ -1,5 +1,6 @@
 ﻿using System;
 using static SharpJoycon.Interfaces.ConfigurationInterface;
+using static SharpJoycon.Interfaces.HIDInterface;
 
 namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
@@ -15,17 +16,21 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
 
         }
 
-        public override void Poll(HIDInterface.PacketData data)
+        public override void Poll(PacketData data)
         {
             buttons = new Buttons();
+            pos = ParseStickPosition(data, 0);
+        }
 
+        public Position ParseStickPosition(PacketData data, int id)
+        {
+            AnalogConfiguration config = GetAnalogConfiguration(id);
             byte[] bytes = data.rawData;
             int offset = GetStickDataOffset();
 
             int posX = bytes[offset] | ((bytes[offset + 1] & 0xF) << 8);
             int posY = (bytes[offset + 1] >> 4) | (bytes[offset + 2] << 4);
 
-            AnalogConfiguration config = GetAnalogConfiguration();
             StickParameters stickParameters = GetStickParameters();
 
             float xDiff = posX - config.xCenter;
@@ -33,9 +38,10 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
 
             float posXf = xDiff / ((xDiff > 0) ? (config.xMax - config.xCenter) : (config.xCenter - config.xMin));
             float posYf = yDiff / ((yDiff > 0) ? (config.yMax - config.yCenter) : (config.yCenter - config.yMin));
-            
+
             // distance from origin
-            if (Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)) < stickParameters.deadzone) {
+            if (Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)) < stickParameters.deadzone)
+            {
                 posXf = 0;
                 posYf = 0;
             }
@@ -53,34 +59,29 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             posY = (int)(posYf * 35900f);
 
 
-            pos = new Position(posX, posY);
+            return new Position(posX, posY);
         }
 
         public abstract int GetStickDataOffset();
+
+        public override Position GetStick(int id)
+        {
+            if (id == 0)
+                return pos;
+            return default(Position);
+        }
 
         public override Buttons GetButtons()
         {
             return buttons;
         }
 
-        public override Position GetStick(int id)
-        {
-            if (id == 0)
-            {
-                return pos;
-            }
-            else
-            {
-                return new Position();
-            }
-        }
-
-        private AnalogConfiguration GetAnalogConfiguration()
+        private AnalogConfiguration GetAnalogConfiguration(int id)
         {
             if (analogConfirguration.Equals(default(AnalogConfiguration)))
             {
                 // will eventually add detection for User generated config
-                analogConfirguration = controller.GetConfig().GetAnalogConfiguration(ConfigurationType.Factory);
+                analogConfirguration = controller.GetConfig().GetAnalogConfiguration(id, ConfigurationType.Factory);
             }
             return analogConfirguration;
         }

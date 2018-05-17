@@ -72,7 +72,7 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             }
         }
 
-        public abstract int GetStickConfigOffset(ConfigurationType type);
+        public abstract int GetStickConfigOffset(int id, ConfigurationType type);
 
         public int GetLeftStickConfigOffset(ConfigurationType type)
         {
@@ -100,7 +100,7 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             }
         }
 
-        public abstract AnalogConfiguration ParseAnalogConfiguration(int[] data);
+        public abstract AnalogConfiguration ParseAnalogConfiguration(int id, int[] data);
 
         public override int ButtonCount()
         {

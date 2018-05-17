@@ -16,14 +16,13 @@ namespace SharpJoycon.Interfaces.SPI
         private NintendoController controller;
         private CommandInterface command;
         private HIDInterface hid;
-        private long pos;
 
         public override bool CanRead => true;
         public override bool CanWrite => true;
         public override bool CanSeek => true;
         public override long Length => 0x10000 + 0x70000;
         // could this be simplified?
-        public override long Position { get => pos; set => pos = value; }
+        public override long Position { get; set; }
 
         public SPIStream(NintendoController controller)
         {
@@ -151,7 +150,7 @@ namespace SharpJoycon.Interfaces.SPI
             {
                 stream.Write(data, 0, data.Length);
             };
-            ReadAsync((int) Position, (int) Length, progress).Wait();
+            ReadAsync((int) Length, progress).Wait();
         }
 
         public override void SetLength(long value)

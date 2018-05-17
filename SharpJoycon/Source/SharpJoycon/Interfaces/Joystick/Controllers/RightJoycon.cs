@@ -8,7 +8,7 @@ using static SharpJoycon.Interfaces.HIDInterface;
 
 namespace SharpJoycon.Interfaces.Joystick.Controllers
 {
-    class RightJoycon : Joycon 
+    public class RightJoycon : Joycon 
     {
         public RightJoycon(NintendoController controller) : base(controller)
         {
@@ -50,16 +50,19 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
         }
 
 
-        public override AnalogConfiguration ParseAnalogConfiguration(int[] data)
+        public override AnalogConfiguration ParseAnalogConfiguration(int id, int[] data)
         {
             AnalogConfiguration config = new AnalogConfiguration();
 
-            config.xCenter = data[0];
-            config.yCenter = data[1];
-            config.xMax = data[4] + config.xCenter;
-            config.yMax = data[5] + config.yCenter;
-            config.xMin = config.xCenter - data[2];
-            config.yMin = config.yCenter - data[3];
+            if (id == 0)
+            {
+                config.xCenter = data[0];
+                config.yCenter = data[1];
+                config.xMax = data[4] + config.xCenter;
+                config.yMax = data[5] + config.yCenter;
+                config.xMin = config.xCenter - data[2];
+                config.yMin = config.yCenter - data[3];
+            }
 
             return config;
         }
@@ -69,9 +72,12 @@ namespace SharpJoycon.Interfaces.Joystick.Controllers
             return 9;
         }
 
-        public override int GetStickConfigOffset(ConfigurationType type)
+        public override int GetStickConfigOffset(int id, ConfigurationType type)
         {
-            return GetRightStickConfigOffset(type);
+            if (id == 0)
+                return GetRightStickConfigOffset(type);
+            else
+                return -1;
         }
     }
 }

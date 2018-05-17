@@ -20,20 +20,21 @@ namespace SharpJoycon.Interfaces
             hardware = controller.GetHardware();
         }
 
-        public AnalogConfiguration GetAnalogConfiguration(ConfigurationType type)
+        public AnalogConfiguration GetAnalogConfiguration(int id, ConfigurationType type)
         {
             Controller joystick = this.joystick.GetJoystick();
             SPIStream stream = spi.GetStream();
-            stream.Seek(joystick.GetStickConfigOffset(type), SeekOrigin.Begin);
+            stream.Seek(joystick.GetStickConfigOffset(id, type), SeekOrigin.Begin);
             byte[] data = stream.Read(0, 0x12);
             int[] parsedData = ParseAnalogConfiguration(data);
-            return joystick.ParseAnalogConfiguration(parsedData);
+            return joystick.ParseAnalogConfiguration(id, parsedData);
         }
 
         public StickParameters GetStickParameters()
         {
             SPIStream stream = spi.GetStream();
             stream.Seek(0x6086, SeekOrigin.Begin);
+            // second stick params exist, but are normally the same as the first
             byte[] data = stream.Read(0, 0x11);
             StickParameters param = new StickParameters();
             param.deadzone = data[2];
