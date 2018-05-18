@@ -26,7 +26,7 @@ namespace SharpJoycon.Interfaces
             return hid.ReadPacket();
         }
 
-        public PacketData SendSubcommand(byte command, byte subCommand, byte[] data)
+        public PacketData SendSubcommand(byte command, byte subCommand, byte[] data = null)
         {
             data = data ?? new byte[0];
             byte[] output = new byte[0x40];

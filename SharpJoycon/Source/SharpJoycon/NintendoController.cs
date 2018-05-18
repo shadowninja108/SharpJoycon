@@ -20,9 +20,28 @@ namespace SharpJoycon
         private HomeLEDInterface homeLED;
         private IMUInterface imu;
 
+        private ConnectionType connectionType;
+
         public NintendoController(HidDevice device)
         {
             this.device = device;
+
+            CommandInterface command = GetCommands();
+            try
+            {
+                command.SendCommand(0x80, new byte[] { 0x01 }, 1);
+                connectionType = ConnectionType.USB;
+            } catch (Exception)
+            {
+                connectionType = ConnectionType.Bluetooth;
+            }
+            if(connectionType == ConnectionType.USB)
+            {
+                command.SendCommand(0x80, new byte[] { 0x02 }, 1);
+                command.SendCommand(0x80, new byte[] { 0x03 }, 1);
+                command.SendCommand(0x80, new byte[] { 0x02 }, 1);
+                command.SendCommand(0x80, new byte[] { 0x04 }, 1);
+            }
         }
 
         public HidDevice GetRawHID() => device;
@@ -98,6 +117,11 @@ namespace SharpJoycon
             }
             Console.WriteLine($"{controllers.Count} controller(s) found.");
             return controllers;
+        }
+
+        public enum ConnectionType
+        {
+            Bluetooth, USB
         }
     }
 }
