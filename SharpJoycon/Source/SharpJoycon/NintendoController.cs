@@ -7,7 +7,7 @@ using System.Linq;
 //joycon m e n
 namespace SharpJoycon
 {
-    public class NintendoController
+    public class NintendoController : IDisposable
     {
         private HidDevice device;
 
@@ -20,27 +20,31 @@ namespace SharpJoycon
         private HomeLEDInterface homeLED;
         private IMUInterface imu;
 
-        private ConnectionType connectionType;
+        public ConnectionType connectionType;
 
         public NintendoController(HidDevice device)
         {
             this.device = device;
 
             CommandInterface command = GetCommands();
+
             try
             {
-                command.SendCommand(0x80, new byte[] { 0x01 }, 1);
-                connectionType = ConnectionType.USB;
+                command.SendCommand(0x80, new byte[] { 0x01 }); // throws exception on Bluetooth connection (is the controller throwing it?)
+                                                                   // use this to detect if it's USB or Bluetooth
+                connectionType = ConnectionType.USB;               // command accepted, must be USB
+                                                                   // command itself returns info like MAC address and info about connected controllers (joycon grip)
             } catch (Exception)
             {
                 connectionType = ConnectionType.Bluetooth;
             }
             if(connectionType == ConnectionType.USB)
             {
-                command.SendCommand(0x80, new byte[] { 0x02 }, 1);
-                command.SendCommand(0x80, new byte[] { 0x03 }, 1);
-                command.SendCommand(0x80, new byte[] { 0x02 }, 1);
-                command.SendCommand(0x80, new byte[] { 0x04 }, 1);
+                // rest of USB handshake
+                command.SendCommand(0x80, new byte[] { 0x02 });
+                command.SendCommand(0x80, new byte[] { 0x03 });
+                command.SendCommand(0x80, new byte[] { 0x02 });
+                command.SendCommand(0x80, new byte[] { 0x04 }); // freezes entire joycon if sent again (for example, if the program inits, then is restarted. better detection needed)
             }
         }
 
@@ -117,6 +121,11 @@ namespace SharpJoycon
             }
             Console.WriteLine($"{controllers.Count} controller(s) found.");
             return controllers;
+        }
+
+        public void Dispose()
+        {
+            GetCommands().SendCommand(0x80, new byte[] { 0x1 }); // allow controller to talk normally again
         }
 
         public enum ConnectionType

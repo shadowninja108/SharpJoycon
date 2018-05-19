@@ -24,19 +24,19 @@ namespace SharpJoycon.Interfaces
         public void Write(byte[] bytes)
         {
             // truncate to fit into the max output report length
-            stream.Write(bytes.Take(hid.GetMaxOutputReportLength()).ToArray());
+            stream.Write(bytes.ToArray());
         }
 
-        public PacketData ReadPacket()
+        public PacketData ReadPacket(int offset = 0)
         {
-            return new PacketData(ReadData());
+            return new PacketData(ReadData(offset));
         }
 
-        public byte[] ReadData()
+        public byte[] ReadData(int offset)
         {
             byte[] buffer = new byte[hid.GetMaxInputReportLength()];
             stream.Read(buffer, 0, buffer.Length);
-            return buffer;
+            return buffer.Skip(offset).ToArray();
         }
 
         public String GetSerialNumber()

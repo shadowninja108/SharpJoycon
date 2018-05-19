@@ -40,31 +40,15 @@ namespace SharpJoycon.Interfaces
         {
             if(deviceInfo.Equals(default(DeviceInfo)))
             {
-                PacketData packet;
-                byte[] data;
-                int i = 0;
-                Console.WriteLine("Attempting to get device info...");
-                while (true)
-                {
-                    // takes its time responding???
-                    i++;
-                    packet = command.SendSubcommand(0x01, 0x02, null);
-                    byte[] header = packet.Header;
-                    data = packet.Data;
-                    if (header[13] == 0x82 && header[14] == 2)
-                        break;
-                }
-                Console.WriteLine($"Device info took {i} attempt{(i == 1 ? "" : "s")}"); // lol grammar
+                byte[] data = command.SendSubcommand(0x01, 0x02, null).Data;
+                MemoryStream stream = new MemoryStream(data);
                 deviceInfo = new DeviceInfo();
-                byte[] firmware = new byte[2];
-                Array.Copy(data, firmware, 2);
-                deviceInfo.firmware = BitConverter.ToInt16(firmware, 0);
-                deviceInfo.type = data[2];
-                deviceInfo.unknown1 = data[3];
-                deviceInfo.macAddress = new byte[5];
-                Array.Copy(data, 5, deviceInfo.macAddress, 0, 5);
-                deviceInfo.unknown2 = data[10];
-                deviceInfo.SPIColorsChanged = data[11];
+                deviceInfo.firmware = BitConverter.ToInt16(stream.Take(2), 0);
+                deviceInfo.type = stream.Take();
+                deviceInfo.unknown1 = stream.Take();
+                deviceInfo.macAddress = stream.Take(5);
+                deviceInfo.unknown2 = stream.Take();
+                deviceInfo.SPIColorsChanged = stream.Take();
             }
             return deviceInfo;
         }

@@ -53,33 +53,24 @@ namespace SharpJoycon.Interfaces.SPI
         {
             decimal reads = Math.Ceiling(((decimal)count / ioLimit));
             byte[] data;
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 for (int i = 0; i < reads; i++)
                 {
                     int readOffset = i * ioLimit;
                     int readAddress = (int)Position + readOffset;
                     int readLength = Math.Min(count - readOffset, ioLimit);
-                    data = new byte[readLength];
                     List<byte> outputBytes = new List<byte>();
 
                     outputBytes.AddAll(BitConverter.GetBytes(readAddress));
                     outputBytes.Add((byte) readLength);
 
                     byte[] output = outputBytes.ToArray();
-                    PacketData packet;
-                    int attempts = 0;
-                    Console.WriteLine($"Attempting SPI read ({i + 1}/{reads})...");
-                    while (true)
-                    {
-                        // spam because why not?
-                        attempts++;
-                        packet = command.SendSubcommand(0x1, 0x10, output);
-                        if (output.SequenceEqual(packet.Data.Take(output.Length)))
-                            break;
-                    }
-                    Console.WriteLine($"SPI read took {attempts} attempt{(attempts == 1 ? "" : "s")}"); // lol grammar
-                    data = packet.Data.Skip(5).Take(readLength).ToArray();
+                    Console.WriteLine($"SPI read ({i + 1}/{reads})...");
+                    PacketData packet = await command.SendSubcommandAsync(0x1, 0x10, output, (p) =>
+                         p.Data.Take(output.Length).SequenceEqual(output) // check that read is the one requested
+                    );
+                    data = packet.Data.Skip(output.Length).Take(readLength).ToArray();
                     progress.Report(data);
                 }
             });
@@ -88,29 +79,22 @@ namespace SharpJoycon.Interfaces.SPI
         public async Task WriteAsync(byte[] data, int offset, int count, IProgress<int> progress)
         {
             decimal writes = Math.Ceiling(((decimal)count / ioLimit));
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 for (int i = 0; i < writes; i++)
                 {
                     int writeOffset = i * ioLimit;
-                    int writeAddress = (int) Position + writeOffset;
                     int writeLength = Math.Min(data.Length - writeOffset, ioLimit);
                     List<byte> outputBytes = new List<byte>();
 
-                    outputBytes.AddAll(BitConverter.GetBytes(writeAddress));
+                    outputBytes.AddAll(BitConverter.GetBytes(Position));
                     outputBytes.Add((byte)writeLength);
                     outputBytes.AddAll(data.Skip(writeOffset + offset).Take(writeLength));
 
                     byte[] output = outputBytes.ToArray();
-                    int result = 0;
-                    int attempts = 0;
-                    Console.WriteLine($"Attempting SPI write ({i + 1}/{writes})...");
-                    while (result != 0x1180) { // magic number found in Joy-Con Toolkit
-                        PacketData packet = command.SendSubcommand(0x1, 0x11, output);
-                        result = BitConverter.ToUInt16(packet.rawData.Skip(0xD).Take(2).ToArray(), 0);
-                        attempts++;
-                    }
-                    Console.WriteLine($"SPI write took {attempts} attempt{(attempts == 1 ? "" : "s")}"); // lol grammar
+                    Console.WriteLine($"SPI write ({i + 1}/{writes})...");
+                    await command.SendSubcommandAsync(0x1, 0x11, output);
                     progress.Report(writeOffset + writeLength);
+                    Seek(writeLength, SeekOrigin.Current);
                 }
             });
         }
@@ -132,7 +116,6 @@ namespace SharpJoycon.Interfaces.SPI
         public override void Write(byte[] buffer, int offset, int count)
         {
             WriteAsync(buffer, offset, count, new Progress<int>()).Wait();
-            Seek(count, SeekOrigin.Current);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -159,8 +142,9 @@ namespace SharpJoycon.Interfaces.SPI
             {
                 stream.Write(data, 0, data.Length);
             };
-            ReadAsync(0, progress).Wait();
+            ReadAsync((int)Length, progress).Wait();
         }
+
 
         public override void SetLength(long value)
         {
