@@ -4,7 +4,7 @@ A WIP cross-platform C# library for using the Nintendo Switch Joycons.
 First project in C#, so it's likely crappy code.
 
 # Requirements
-* Bluetooth
+* Bluetooth or a USB-C cable (and a charging grip for Joycons)
 
 This has only been tested on the latest Windows 10.
 
